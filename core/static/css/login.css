@@ -41,7 +41,7 @@ div.formC > form {
   display: block;
 }
 
-div.formC > form > label {
+div.formC > form > label:not(.custom-file-upload) {
   opacity: 60%;
   font-size: 80%;
 }
@@ -68,10 +68,35 @@ div.formC > form > input:hover {
   border-bottom: 1px solid var(--font-color);
 }
 
+div.formC > form > input[type="file"] {
+  display: none;
+}
+
+.custom-file-upload {
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+  cursor: pointer;
+  display: block;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
 div.formC > form > button {
   cursor: pointer;
   color: var(--font-color);
   background: #7288da;
+  padding: .6rem 1.4rem;
+  border-radius: 2px;
+  width: 100%;
+}
+
+div.formC > form > a.button.is-light {
+  display: block;
+  text-align: center;
+  margin-bottom: -10px;
+  cursor: pointer;
+  color: white;
+  background: rgba(147, 147, 147, 0.1);
   padding: .6rem 1.4rem;
   border-radius: 2px;
   width: 100%;

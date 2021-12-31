@@ -1,0 +1,32 @@
+<html lang="pt-BR">
+{% load static %}
+<head>
+  <meta charset="UTF-8">
+  <title>Login Form</title>
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
+</head>
+<body>
+<div class="formC">
+  <h2 class="title">
+    Meu perfil
+  </h2>
+  <form method="post">
+    <label>Nome</label>
+    <input type="text" name="name" value="Gabriell Oliveira"/>
+
+    <label>Nova senha</label>
+    <input type="password" name="password"/>
+  
+    <label for="file-upload" class="custom-file-upload">
+      <i class="fa fa-cloud-upload"></i> Alterar avatar
+    </label>
+    <input id="file-upload" type="file"/>
+
+    <a class="button is-light">Voltar</a>
+    <button>Salvar</button>
+  </form>
+</div>
+</body>
+</html>
