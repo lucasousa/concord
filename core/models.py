@@ -1,8 +1,9 @@
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
-from .managers import CustomUserManager
 from django.db import models
 import uuid
+
+from core.managers import UserManager
 
 
 class BaseModel(models.Model):
@@ -16,29 +17,28 @@ class BaseModel(models.Model):
 
 class User(BaseModel, AbstractBaseUser, PermissionsMixin):
     STATUS_ONLINE = "online"
-    STATUS_OFFLINE = "online"
+    STATUS_OFFLINE = "offline"
 
-    STATUS_CHOICE = (
-        (STATUS_ONLINE, "online"),
-        (STATUS_OFFLINE, "offline")
-    )
+    STATUS_CHOICES = ((STATUS_ONLINE, "online"), (STATUS_OFFLINE, "offline"))
     name = models.CharField("Nome", max_length=50, null=False, blank=False)
     username = models.CharField("Username", max_length=50, unique=True)
     image = models.ImageField("Imagem", upload_to="media/avatar", null=True, blank=True)
     last_ping = models.DateField("Visto por último", null=True, blank=True)
-    status = models.CharField("Status", choices=STATUS_CHOICE, max_length=10, blank=True, null=True)
-    is_staff = models.BooleanField(default=False)
+    status = models.CharField(
+        "Status", choices=STATUS_CHOICES, max_length=10, blank=True, null=True
+    )
     is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = "username"
     REQUIRED_FIELDS = []
 
-    objects = CustomUserManager()
+    objects = UserManager()
 
     def __str__(self) -> str:
         return self.username
-    
+
     class Meta:
         ordering = ["name"]
-        verbose_name = 'Usuário'
-        verbose_name_plural = 'Usuários'
+        verbose_name = "Usuário"
+        verbose_name_plural = "Usuários"
