@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --font-color: rgb(238, 238, 238, 0.8);
+}
+
+body {
+  color: var(--font-color);
+  background-image: radial-gradient(circle at 16% 83%, rgba(148, 148, 148, .06) 0%, rgba(148, 148, 148, .06) 50%, rgba(63, 63, 63, .06) 50%, rgba(63, 63, 63, .06) 100%), radial-gradient(circle at 68% 87%, rgba(66, 66, 66, .06) 0%, rgba(66, 66, 66, .06) 50%, rgba(105, 105, 105, .06) 50%, rgba(105, 105, 105, .06) 100%), radial-gradient(circle at 38% 50%, rgba(123, 123, 123, .06) 0%, rgba(123, 123, 123, .06) 50%, rgba(172, 172, 172, .06) 50%, rgba(172, 172, 172, .06) 100%), linear-gradient(90deg, hsl(18, 0%, 1%), hsl(18, 0%, 1%));
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  font-family: 'Noto Sans', sans-serif;
+}
+
+div.formC {
+  width: 400px;
+  max-width: 86%;
+  min-height: 500px;
+  padding: 1rem;
+  border-radius: 6px;
+  background: rgb(225, 225, 225, .05);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 8px 10px 0 rgb(0, 0, 0, .06);
+  margin: 10vh auto;
+  overflow: hidden;
+}
+
+div.formC > .title {
+  text-align: center;
+  margin: 3rem auto;
+}
+
+div.formC > form {
+  display: block;
+}
+
+div.formC > form > label {
+  opacity: 60%;
+  font-size: 80%;
+}
+
+div.formC > form > input, div.formC > form > button {
+  outline: none;
+  border: none;
+  display: block;
+  font-size: 1rem;
+}
+
+div.formC > form > input {
+  width: 100%;
+  height: 3rem;
+  padding: 0 1rem;
+  color: var(--font-color);
+  background: rgb(0, 0, 0, .1);
+  border-bottom: 1px solid black;
+  margin: 1rem auto;
+}
+
+div.formC > form > input:hover {
+  transition: 400ms;
+  border-bottom: 1px solid var(--font-color);
+}
+
+div.formC > form > button {
+  cursor: pointer;
+  color: var(--font-color);
+  background: #7288da;
+  padding: .6rem 1.4rem;
+  border-radius: 2px;
+  width: 100%;
+}
+
+div.bottom {
+  font-size: 80%;
+  text-align: center;
+  margin: 5rem auto 1rem auto;
+}
+
+div.bottom > a {
+  color: var(--font-color);
+  text-decoration: underline;
+}
+
+@media only screen and (min-width: 768px) {
+  div.formC {
+    padding: 1rem 2rem;
+  }
+
+  div.formC > form > button {
+    margin: 2rem 0;
+  }
+}

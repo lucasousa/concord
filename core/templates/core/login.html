@@ -1,0 +1,22 @@
+<html lang="pt-BR">
+{% load static %}
+<head>
+  <meta charset="UTF-8">
+  <title>Login Form</title>
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+<div class="formC">
+  <h2 class="title">
+    Bem vindo(a) de novo!
+  </h2>
+  <form>
+    <label>Usuário</label>
+    <input type="text" name="username"/>
+    <label>Senha</label>
+    <input type="password" name="password"/>
+    <button>Login</button>
+  </form>
+</div>
+</body>
+</html>
