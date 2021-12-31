@@ -1,0 +1,46 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+  <div class="messages">
+    <div class="messages--received">
+
+      <div class="message-element">
+        <div class="message-element--header">
+          <div class="message-element--header--date">
+            10:30 |
+          </div>
+          <div class="message-element--header--name">
+            Gabriell Oliveira:
+          </div>
+        </div>
+        <div class="message-element--body">
+          Teste de mensagem
+        </div>
+      </div>
+
+      <hr>
+
+       <div class="message-element">
+        <div class="message-element--header">
+          <div class="message-element--header--date">
+            10:30 |
+          </div>
+          <div class="message-element--header--name">
+            Gabriell Oliveira:
+          </div>
+        </div>
+        <div class="message-element--body">
+          Teste de mensagem
+        </div>
+      </div>
+
+      <hr>
+
+    </div>
+
+    <div class="messages--send">
+      <input type="text" placeholder="Digite aqui">
+    </div>
+
+  </div>
+{% endblock %}

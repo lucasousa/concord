@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
+</head>
+<body>
+
+<div class="discordApp">
+  <div class="server">
+    <div class="server--icon active is-img">
+      <img src="https://bulma.io/images/placeholders/64x64.png" alt="">
+    </div>
+    <div class="server--seperator"></div>
+    <div class="server--icon">
+      <span>Gab</span>
+    </div>
+    <div class="server--icon">
+      <span>Joã</span>
+    </div>
+    <div class="server--icon">
+      <span>Mar</span>
+    </div>
+  </div>
+  <div class="chatOuter">
+    <div class="channels">
+      <nav>
+        <h3>Marketeiros</h3>
+      </nav>
+
+      <div class="channels--list">
+
+        <div class="channels--list-item">
+          <div class="channels--list-header">
+            <h4><span><i class="fas fa-bullhorn"></i></span>Canais</h4>
+          </div>
+          <div class="channels--list-content">
+            <div class="channels--list-content-item">
+              <span><i class="fas fa-hashtag"></i></span>
+              <h5>General</h5>
+            </div>
+          </div>
+        </div>
+
+        <div class="channels--seperator"></div>
+
+        <div class="channels--list-item">
+          <div class="channels--list-header">
+            <h4><span><i class="fas fa-comments"></i></span>Grupos</h4>
+          </div>
+          <div class="channels--list-content">
+            <div class="channels--list-content-item">
+              <span><i class="fas fa-hashtag"></i></span>
+              <h5>General</h5>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="channels--userArea">
+        <div class="name">
+          <span class="userIcon">
+            <img src="https://bulma.io/images/placeholders/128x128.png" alt="">
+          </span>
+          <div class="title">
+            <h4>Gabriell Oliveira</h4>
+            <span class="subText">Online</span>
+          </div>
+        </div>
+        <div class="icons">
+          <a href="">
+              <span class="is-white">
+                <i class="fas fa-cog"></i>
+              </span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat">
+      <nav>
+        <div class="header">
+          <span>#</span>
+          <h2>general</h2>
+        </div>
+      </nav>
+      <div class="chat--inner">
+
+        {% block content %}
+        {% endblock %}
+
+        <div class="members">
+
+          <div class="member">
+            <span class="userIcon">
+              <img src="https://bulma.io/images/placeholders/128x128.png" alt="">
+            </span>
+            <div class="title">
+              <h4>Gabriell Oliveira</h4>
+              <span class="subText">Online</span>
+            </div>
+          </div>
+
+          <div class="member">
+            <span class="userIcon">
+              <img src="https://bulma.io/images/placeholders/128x128.png" alt="">
+            </span>
+            <div class="title">
+              <h4>Gabriell Oliveira</h4>
+              <span class="subText">Online</span>
+            </div>
+          </div>
+
+          <div class="member">
+            <span class="userIcon">
+              <img src="https://bulma.io/images/placeholders/128x128.png" alt="">
+            </span>
+            <div class="title">
+              <h4>Gabriell Oliveira</h4>
+              <span class="subText">Offline</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
