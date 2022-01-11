@@ -127,6 +127,17 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'core.backends.ModelBackend',
+)
+
+AUTH_USER_MODEL = 'core.User'
+LOGIN_URL = 'core:login'
+LOGOUT_URL = 'core:logout'
+LOGIN_REDIRECT_URL = 'core:home'
+LOGOUT_REDIRECT_URL = 'core:login'
+
 BROKER_URL = 'redis://redis:6379/0'
 
 CELERY_BROKER_URL = BROKER_URL
