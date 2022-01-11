@@ -32,6 +32,8 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
 # Application definition
 
 INSTALLED_APPS = [
+    "channels",
+    
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -73,7 +75,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "concord.wsgi.application"
+# WSGI_APPLICATION = "concord.wsgi.application"
+ASGI_APPLICATION = "concord.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
@@ -123,3 +126,21 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+BROKER_URL = 'redis://redis:6379/0'
+
+CELERY_BROKER_URL = BROKER_URL
+
+CELERY_RESULT_BACKEND = BROKER_URL
+
+CELERY_ACCEPT_CONTENT = ['application/json']
+
+CELERY_TASK_SERIALIZER = 'json'
+
+CELERY_RESULT_SERIALIZER = 'json'
+
+CELERY_TIMEZONE = TIME_ZONE
+
+CELERY_ACKS_LATE = True
+
+CELERYD_PREFETCH_MULTIPLIER = 1
