@@ -379,3 +379,13 @@ a span.is-white {
 .messages--received .message-element .message-element--header .message-element--header--date {
   margin-right: 5px;
 }
+
+.custom-imput{
+  border-left: none;
+  border-top: none;
+  border-right: none;
+  outline: none;
+  background-color: #6272a4;
+  width: 100%;
+  border-bottom: 1px solid black;
+}
