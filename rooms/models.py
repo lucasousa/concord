@@ -1,5 +1,4 @@
 from django.db import models
-
 from core.models import BaseModel
 
 
@@ -13,6 +12,21 @@ class Room(BaseModel):
 
     def __str__(self) -> str:
         return self.name
+
+    @property
+    def get_users(self):
+        response = []
+        for user in self.user.all():
+            response.append(
+                {
+                    "id":user.id,
+                    "name":user.name,
+                    "username":user.username,
+                    "room": self.id
+                }
+            )
+        
+        return response
 
     class Meta:
         ordering = ["-created_at"]

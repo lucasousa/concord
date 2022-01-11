@@ -10,7 +10,7 @@
   <h2 class="title">
     Bem vindo(a) de novo!
   </h2>
-  <form method="post">
+  <form method="post">{% csrf_token %}
     <label>Usuário</label>
     <input type="text" name="username"/>
     <label>Senha</label>
