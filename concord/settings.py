@@ -155,3 +155,15 @@ CELERY_TIMEZONE = TIME_ZONE
 CELERY_ACKS_LATE = True
 
 CELERYD_PREFETCH_MULTIPLIER = 1
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [(config("HOST_REDIS"), 6379)],
+            "capacity": 1500,
+            "expiry": 60,
+        },
+    },
+}
