@@ -34,7 +34,7 @@ class User(BaseModel, AbstractBaseUser, PermissionsMixin):
             )
         ],)
     image = models.ImageField("Imagem", upload_to="media/avatar", default="default.jpg", null=True, blank=True)
-    last_ping = models.DateField("Visto por último", null=True, blank=True)
+    last_ping = models.DateTimeField("Visto por último", null=True, blank=True)
     status = models.CharField(
         "Status", choices=STATUS_CHOICES, max_length=10, blank=True, null=True
     )

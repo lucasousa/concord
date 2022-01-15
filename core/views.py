@@ -1,8 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render, redirect
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
+from django.shortcuts import render
 from django.urls import reverse
+from django.utils import timezone
 
 from rooms.models import Message, Room
 from .forms import ProfileForm
@@ -51,3 +54,22 @@ def chat(request, uuid):
     }
 
     return render(request, "core/home.html", context)
+    
+
+def update_lastping(request, id, status):
+    user = User.objects.get(id=id)
+    user.last_ping = timezone.now()
+    user.status = status
+    user.save()
+    return JsonResponse(data={'success': True})
+
+
+def get_statuses(request):
+    ret = []
+    User.objects.filter(
+        last_ping__lte=timezone.now()-timezone.timedelta(minutes=0.5),
+        status=User.STATUS_ONLINE
+    ).update(status=User.STATUS_OFFLINE)
+    users = User.objects.all().values_list('id', 'status', 'last_ping')
+    data = {'data': list(users)}
+    return JsonResponse(data=data, safe=False)

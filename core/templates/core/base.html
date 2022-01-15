@@ -164,8 +164,8 @@
             <img src="{% if user.image %} {{ user.image.url }} {% endif %}" alt="">
           </span>
           <div class="title">
-            <h4 style="font-size: 17px;">{{ user.username }}</h4>
-            <span class="subText">{{ user.status }}</span>
+            <h4 style="font-size: 17px;">{{user.username}}</h4>
+            <span id="status-{{ user.id }}" class="subText">{{user.status}}</span>
           </div>
         </div>
         <div class="icons">
@@ -217,7 +217,7 @@
                     </a>
                   {% endif %}
                 </div>
-                <span class="subText">{{ member.status }}</span>
+                <span id="status-{{ member.id }}" class="subText">{{ member.status }}</span>
               </div>
             </div>
           {% endfor %}
@@ -424,7 +424,7 @@
                   <i class="fas fa-times" style="margin-left: 20px" style="margin-left: 30px"> Remover </i>
                 </a>
               </div>
-              <span class="subText">Online</span>
+              <span id='status-${obj.id}' class="subText">Online</span>
             </div>
           </div>
         
