@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Concord</title>
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
   <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
   <link rel="stylesheet" 
@@ -40,7 +40,7 @@
 <div class="discordApp">
   <div class="server">
     <div class="server--icon active is-img">
-      <img src="https://bulma.io/images/placeholders/64x64.png" alt="">
+      <img src="{%  if user.image %} {{user.image.url}} {% endif %}" alt="">
     </div>
     <div class="server--seperator"></div>
     <div class="server--icon">
@@ -141,7 +141,7 @@
       <div class="channels--userArea">
         <div class="name">
           <span class="userIcon">
-            <img src="https://bulma.io/images/placeholders/128x128.png" alt="">
+            <img src="{%  if user.image %} {{user.image.url}} {% endif %}" alt="">
           </span>
           <div class="title">
             <h4 style="font-size: 17px;">{{user.username}}</h4>
@@ -211,7 +211,6 @@
                       {{ profile_form.errors.image }}
                     </div>
 
-{#                    <input type="file" class="form-control bg-dark" name="image" accept="image/*" id="id_image">#}
                     <div class="d-none">
                       Currently: <a href="/media/media/avatar/ALIGER-ANEFUS-TRANSP-crop_nyng5p1.png">media/avatar/ALIGER-ANEFUS-TRANSP-crop_nyng5p1.png</a>
                       <input type="checkbox" name="image-clear" id="image-clear_id">
@@ -366,7 +365,7 @@
         `
           <div class="member">
             <span class="userIcon">
-              <img src="https://bulma.io/images/placeholders/128x128.png" alt="">
+              <img src="{%  if user.image %} {{user.image.url}} {% endif %}" alt="">
             </span>
             <div class="title">
               <div style="display:flex; flex-direction: row; align-items: center; font-size: 13px">
@@ -471,6 +470,9 @@
       document.querySelector("#image-clear_id").checked = true
   }
 </script>
+
+{% block js %}
+{% endblock %}
 
 
 </body>

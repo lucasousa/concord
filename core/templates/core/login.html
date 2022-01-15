@@ -10,12 +10,15 @@
   <h2 class="title">
     Bem vindo(a) de novo!
   </h2>
-  <form method="post">{% csrf_token %}
-    <label>Usuário</label>
-    <input type="text" name="username"/>
-    <label>Senha</label>
-    <input type="password" name="password"/>
+  <form method="post">
+    {% csrf_token %}
+    <label for="{{ form.username.id_for_label }}">Usuário</label>
+    {{ form.username }}
+    <label for="{{ form.password.id_for_label }}">Senha</label>
+    {{ form.password }}
+    {{ form.password.errors }}
     <button>Login</button>
+    {{ form.non_field_errors }}
   </form>
 </div>
 </body>

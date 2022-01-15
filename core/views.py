@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.shortcuts import get_object_or_404
 
 
-from rooms.models import Room
+from rooms.models import Message, Room
 from .models import User
 from .forms import ProfileForm
 
@@ -25,12 +25,7 @@ def home(request):
 
         profile_form = ProfileForm(request.POST, request.FILES, instance=request.user)
 
-        print(request.POST, request.FILES,  profile_form)
         if profile_form.is_valid():
-            # profile.name = profile_form.cleaned_data['name']
-            # profile.username = profile_form.cleaned_data['username']
-            # profile.image = profile_form.cleaned_data['image']
-            print(profile_form.cleaned_data['name'])
             profile_form.save()
 
             return HttpResponseRedirect(reverse('core:home'))
@@ -39,8 +34,16 @@ def home(request):
     channels = Room.objects.filter(every_one_send_message=False)
 
     if not request.user.is_superuser:
-        groups = groups.objects.filter(user=request.user) 
-        channels = channels.objects.filter(user=request.user)
+        groups = []
+        channels = []
+
+        if groups:
+            print("aqui1")
+            groups = groups.objects.filter(user=request.user)
+
+        if channels:
+            print("aqui1")
+            channels = channels.objects.filter(user=request.user)
 
     return render(request, "core/home.html",{
             "groups": groups,
@@ -53,5 +56,21 @@ def home(request):
 @login_required
 def profile(request):
     return render(request, "core/profile.html")
+    
+    
+    
+@login_required
+def chat(request, id):
+    user = get_object_or_404(User, pk=request.user.pk)
+    group = Room.objects.filter(user=user).first()
+    messages = Message.objects.filter(room=group).order_by("created_at")
+
+    context = {
+        "messages": messages,
+        "group": group,
+        "user":user
+    }
+
+    return render(request, "core/home.html", context)
 
 
