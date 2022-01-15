@@ -19,6 +19,7 @@ body {
   font-family: 'Open Sans';
   padding: 0;
   margin: 0;
+  max-height: 100vh;
 }
 
 .discordApp {
@@ -272,13 +273,15 @@ body {
 
 .chat--inner {
   display: flex;
-  height: 100%;
+  height: calc(100% - 60px);
 }
 
 .messages {
   width: calc(100% - 240px);
   display: flex;
   flex-direction: column;
+  overflow-y: scroll;
+  max-height: 100%;
 }
 
 .messages .messages--send {
@@ -378,6 +381,17 @@ a span.is-white {
 
 .messages--received .message-element .message-element--header .message-element--header--date {
   margin-right: 5px;
+}
+
+.messages--received{
+  padding-bottom: 5rem;
+}
+
+.messages--send {
+  position: absolute;
+  width: 70%;
+  bottom: 0;
+  background: var(--color-grey-light);
 }
 
 .custom-input{

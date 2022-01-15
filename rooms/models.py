@@ -1,5 +1,5 @@
-from django.db import models
 from core.models import BaseModel
+from django.db import models
 
 
 class Room(BaseModel):
@@ -10,6 +10,10 @@ class Room(BaseModel):
     type = models.CharField("Tipo", max_length=10)
     user = models.ManyToManyField("core.User", verbose_name="Usuário", blank=False)
 
+    @property
+    def one_a_one(self):
+        return self.user.count() == 2 and self.every_one_send_message
+
     def __str__(self) -> str:
         return self.name
 
@@ -19,13 +23,13 @@ class Room(BaseModel):
         for user in self.user.all():
             response.append(
                 {
-                    "id":user.id,
-                    "name":user.name,
-                    "username":user.username,
-                    "room": self.id
+                    "id": user.id,
+                    "name": user.name,
+                    "username": user.username,
+                    "room": self.id,
                 }
             )
-        
+
         return response
 
     class Meta:
@@ -47,6 +51,17 @@ class Message(BaseModel):
     file = models.FileField(
         "Arquivo", upload_to="media/file", max_length=254, null=True, blank=True
     )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "created_at": str(self.created_at),
+            "update_at": str(self.updated_at),
+            "user": self.user.name,
+            "room": str(self.room.uuid),
+            "text": self.text,
+            "file": self.file.url if self.file else None,
+        }
 
     def __str__(self):
         return self.text

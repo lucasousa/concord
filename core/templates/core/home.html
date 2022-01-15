@@ -2,13 +2,17 @@
 
 {% block content %}
   <div class="messages">
-    <div class="messages--received">
+    <div class="messages--received" id="chat-messages">
+
+      {% if not room %}
+        <h4 style="color: white; padding: 1rem;">Selecione uma sala.</h4>
+      {% endif %}
 
       {% for message in messages %}
-      <div class="message-element">
-          <div class="message-element--header" id="chat-messages">
+        <div class="message-element">
+          <div class="message-element--header">
             <div class="message-element--header--date">
-              {{message.created_at}} |
+              {{message.created_at|date:"d/m/Y"}} |
             </div>
             <div class="message-element--header--name">
               {{message.user.name}}:
@@ -23,15 +27,15 @@
 
     </div>
 
-    <div class="messages--send">
-      <input type="text" placeholder="Digite aqui" id="chat-message-input">
-      <button class="button is-bg-orange" id="chat-message-submit">Submit</button>
-    </div>
+    {% if room.every_one_send_message or request.user.is_superuser %}
+      <div class="messages--send">
+        <input type="text" placeholder="Digite aqui" id="chat-message-input">
+      </div>
+    {% endif %}
 
   </div>
 
-  {{ group.uuid|json_script:"json-roomuuid" }}
-  {{ group.name|lower|json_script:"json-roomname" }}
+  {{ room.uuid|json_script:"json-roomuuid" }}
   {{ user.uuid|json_script:"json-useruuid" }}
 
 {% endblock %}
@@ -41,32 +45,57 @@
 
       const roomUuid = JSON.parse(document.getElementById('json-roomuuid').textContent);
       const userUuid = JSON.parse(document.getElementById('json-useruuid').textContent);
-      const roomName = JSON.parse(document.getElementById('json-roomname').textContent);
       
       const chatSocket = new WebSocket(
           'ws://'
           + window.location.host
           + '/ws/'
-          + roomName
+          + roomUuid
           + '/'
       );
 
       chatSocket.onmessage = function(e) {
           const data = JSON.parse(e.data);
 
-          if (data.message) {
-              document.querySelector('#chat-messages').innerHTML += ('<b>' + data.username + '</b>: ' + data.message + '<br>');
-          } else {
-              alert('A mensagem está vazia!');
-          }
+          if (data.type === 'new_message') {
+            const message = data.data;
+            const messageElement = document.createElement('div');
+            let created_at = new Date(message.created_at);
+            let month = created_at.getMonth() + 1;
+            if (month < 10) {
+              month = '0' + month;
+            }
+            messageElement.innerHTML = `
+              <div class="message-element">
+                <div class="message-element--header">
+                    <div class="message-element--header--date">
+                        ${created_at.getDate()}/${month}/${created_at.getFullYear()} |
+                    </div>
+                    <div class="message-element--header--name">
+                        ${message.user}:
+                    </div>
+                </div>
+                <div class="message-element--body">
+                    ${message.text}
+                </div>
+              </div>
+              <hr>
+            `;
+            document.getElementById('chat-messages').appendChild(messageElement);
+            document.getElementsByClassName("messages")[0].scrollTo(0,document.getElementsByClassName("messages")[0].scrollHeight);
+        }
+        
       };
 
       chatSocket.onclose = function(e) {
           console.log('The socket close unexpectadly');
       };
 
-      document.querySelector('#chat-message-submit').onclick = function(e) {
-          const messageInputDom = document.querySelector('#chat-message-input');
+      document.querySelector('#chat-message-input').onkeydown = function(e) {
+
+        if (e.keyCode === 13) {
+          
+          const messageInputDom = document.getElementById('chat-message-input');
           const message = messageInputDom.value;
 
           chatSocket.send(JSON.stringify({
@@ -76,6 +105,7 @@
           }));
 
           messageInputDom.value = '';
+        }
       };
      
   </script>
