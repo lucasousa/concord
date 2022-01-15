@@ -36,7 +36,7 @@ class User(BaseModel, AbstractBaseUser, PermissionsMixin):
     image = models.ImageField("Imagem", upload_to="media/avatar", default="default.jpg", null=True, blank=True)
     last_ping = models.DateTimeField("Visto por último", null=True, blank=True)
     status = models.CharField(
-        "Status", choices=STATUS_CHOICES, max_length=10, blank=True, null=True
+        "Status", choices=STATUS_CHOICES, max_length=10, default=STATUS_OFFLINE, blank=True, null=True,
     )
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
