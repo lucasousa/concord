@@ -205,9 +205,11 @@
               <div class="title">
                 <div style="display:flex; flex-direction: row; align-items: center; font-size: 13px">
                   <h4>{{ member.name }}</h4>
-                  <a href="#" onclick="removeParticipant( '${obj.id}' , '${obj.name}', '${obj.room}' )">
-                    <i class="fas fa-times" style="margin-left: 20px" style="margin-left: 30px"> Remover </i>
-                  </a>
+                  {% if room %}
+                    <a href="#" onclick="removeParticipant( '{{ member.id }}' , '{{ member.name }}', '{{ room.id }}' )">
+                      <i class="fas fa-times" style="margin-left: 20px" style="margin-left: 30px"> Remover </i>
+                    </a>
+                  {% endif %}
                 </div>
                 <span class="subText">{{ member.status }}</span>
               </div>
