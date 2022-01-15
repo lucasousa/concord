@@ -18,21 +18,22 @@ def index(request):
 
 @login_required
 def home(request):
-    profile_form = ProfileForm()
-    if request.method == 'POST' or request.method == 'PATCH':
+    profile_form = ProfileForm(instance=request.user)
+
+    if request.method == 'POST':
         profile = get_object_or_404(User, pk=request.user.pk)
 
-        profile_form = ProfileForm(request.POST)
-        profile_form.is_valid()
+        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user)
+
+        print(request.POST, request.FILES,  profile_form)
         if profile_form.is_valid():
-            # process the data in form.cleaned_data as required (here we just write it to the model due_back field)
-            profile.name = profile_form.cleaned_data['name']
-            profile.username = profile_form.cleaned_data['username']
-            profile.save()
+            # profile.name = profile_form.cleaned_data['name']
+            # profile.username = profile_form.cleaned_data['username']
+            # profile.image = profile_form.cleaned_data['image']
+            print(profile_form.cleaned_data['name'])
+            profile_form.save()
+
             return HttpResponseRedirect(reverse('core:home'))
-
-
-
 
     groups = Room.objects.filter(every_one_send_message=True)
     channels = Room.objects.filter(every_one_send_message=False)

@@ -2,6 +2,9 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 import uuid
+from django.core import validators
+import re
+
 
 from core.managers import UserManager
 
@@ -21,8 +24,16 @@ class User(BaseModel, AbstractBaseUser, PermissionsMixin):
 
     STATUS_CHOICES = ((STATUS_ONLINE, "online"), (STATUS_OFFLINE, "offline"))
     name = models.CharField("Nome", max_length=50, null=False, blank=False)
-    username = models.CharField("Username", max_length=50, unique=True)
-    image = models.ImageField("Imagem", upload_to="media/avatar", null=True, blank=True)
+    username = models.CharField("Username", max_length=50, unique=True, validators=[
+            validators.RegexValidator(
+                re.compile('^[\w.@+-]+$'),
+                'Informe um nome de usuário válido. '
+                'Este valor deve conter apenas letras, números '
+                'e os caracteres: @/./+/-/_ .'
+                , 'invalid'
+            )
+        ],)
+    image = models.ImageField("Imagem", upload_to="media/avatar", default="default.jpg", null=True, blank=True)
     last_ping = models.DateField("Visto por último", null=True, blank=True)
     status = models.CharField(
         "Status", choices=STATUS_CHOICES, max_length=10, blank=True, null=True

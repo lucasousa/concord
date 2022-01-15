@@ -1,3 +1,4 @@
+{% load widget_tweaks %}
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
@@ -188,7 +189,7 @@
 
       <div class="modal-header" style="border: none">
         <h5 class="modal-title">
-            <span class="text-modal-title">Editar Profile</span>
+            <span class="text-modal-title"></span>
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -197,42 +198,54 @@
 
 
       <div class="modal-body" id="modal-body-friendship" >
-        <form action="" method="post">
+        <form method = "post" enctype="multipart/form-data">
           {% csrf_token %}
-          <div class="box">
-            <label>Name:</label>
-            <input type="text" value="{{user.name}}" name="name" maxlength="50" id="id_name" autofocus
-                   style="border-left: none; border-top: none; border-right: none; outline: none; background-color: #6272a4; width: 100%; border-bottom: 1px solid black;">
-          </div>
-          <div class="box">
-            <label>Username:</label>
-            <input id="id_username"  name="username" type="text" value="{{user.username}}" name="username" maxlength="50" id="id_username"
-                   style="border-left: none; border-top: none; border-right: none; outline: none; background-color: #6272a4; width: 100%; border-bottom: 1px solid black;">
+          <div class="account-settings">
+              <div class="user-profile d-flex flex-column align-items-center">
+                <div class="user-avatar d-flex flex-column align-items-center">
+                  <img src="{%  if user.image %} {{user.image.url}} {% endif %}" id="image_viewer" class="border">
+                  <div class="m-4">
+                    <label  class="btn bg-info m-2" for="id_image">Upload</label>
+                    <label  class="btn bg-warning m-2" onclick="delete_image()">Excluir</label>
+                    <div class="text-danger">
+                      {{ profile_form.errors.image }}
+                    </div>
 
-          </div>
-
-          </br>
-{#           {% if user.image %}#}
-              <div class="columns">
-                <div class="column">
-                  <a href="{{ user.image.url }}" class="button text-dark">Atual: {{ user.image.name }}</a>
+{#                    <input type="file" class="form-control bg-dark" name="image" accept="image/*" id="id_image">#}
+                    <div class="d-none">
+                      Currently: <a href="/media/media/avatar/ALIGER-ANEFUS-TRANSP-crop_nyng5p1.png">media/avatar/ALIGER-ANEFUS-TRANSP-crop_nyng5p1.png</a>
+                      <input type="checkbox" name="image-clear" id="image-clear_id">
+                      <label for="image-clear_id">Clear</label><br>
+                      Change:
+                      <input type="file" name="image" accept="image/*" id="id_image">
+                    </div>
+                  </div>
                 </div>
+
+                <div class="user-name">
+                  {{ profile_form.name.label }}:
+                  <br>
+                  {{ profile_form.name | add_class:'custom-input'}}
+                  <i class="fas fa-edit"></i>
+                </div>
+                <div class="text-danger">
+                    {{ profile_form.errors.name }}
+                </div>
+                <br>
+
+                <div class="user-name">
+                  {{ profile_form.username.label }}:
+                  <br>
+                  {{ profile_form.username | add_class:'custom-input'}}
+                  <i class="fas fa-edit"></i>
+                </div>
+                <div class="text-danger">
+                  {{ profile_form.errors.username }}
+                </div>
+                <br>
+                <input class="btn btn-danger" type="submit" value="Editar">
               </div>
-{#          {% endif %}#}
-
-          <div class="box">
-            <label>Imagem:</label>
-            <input type="file" name="image" accept="image/*" id="id_image">
           </div>
-
-          </br>
-          {% if profile_form.errors %}
-              <h5>Erros</h5>
-              {{ profile_form.errors }}
-              </br>
-
-          {% endif %}
-          <input class="btn btn-danger" type="submit" value="Editar">
         </form>
 
       </div>
@@ -327,8 +340,6 @@
     </div>
   </div>
 </div>
-
-
 
   <style>
     ol{
@@ -444,6 +455,20 @@
     })
     document.getElementById("users_list").value = users.join(',')
     document.getElementById("form_room").submit()
+  }
+
+  id_image = document.getElementById("id_image")
+  image_viewer = document.getElementById("image_viewer")
+  id_image.onchange = evt => {
+    const [file] = id_image.files
+    if (file) {
+      image_viewer.src = URL.createObjectURL(file)
+    }
+  }
+
+  function delete_image(){
+      image_viewer.src = ""
+      document.querySelector("#image-clear_id").checked = true
   }
 </script>
 
