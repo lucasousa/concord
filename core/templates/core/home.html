@@ -111,6 +111,9 @@
 
       setInterval(() => {
           fetch(`/users/${userid}/online`)
+      }, 10000)
+
+      setInterval(() => {
           fetch(`/users`)
             .then((response) => response.json())
             .then(data => {
@@ -118,9 +121,12 @@
                     console.log(value)
                     let id = value[0]
                     let status = value[1]
-                    let item = document.querySelector(`#status-${id}`)
+                    let item = document.querySelectorAll(`#status-${id}`)
                     if (item) {
-                        item.innerHTML = status
+                        for (let pos in item){
+                            console.log('alterando')
+                            item[pos].innerHTML = status
+                        }
                     }
 
                 })
