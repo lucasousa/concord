@@ -43,7 +43,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
     async def send_message(self, event):
-        print("Aqui no event - ", event)
         await self.send(text_data=json.dumps({
             'type': "send_message",
             'message': event.get('message'),

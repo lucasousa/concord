@@ -39,9 +39,11 @@ def home(request):
         channels = []
 
         if groups:
+            print("aqui1")
             groups = groups.objects.filter(user=request.user)
 
         if channels:
+            print("aqui1")
             channels = channels.objects.filter(user=request.user)
 
     return render(request, "core/home.html",{
@@ -59,7 +61,7 @@ def profile(request):
     
     
 @login_required
-def chat(request):
+def chat(request, id):
     user = get_object_or_404(User, pk=request.user.pk)
     group = Room.objects.filter(user=user).first()
     messages = Message.objects.filter(room=group).order_by("created_at")

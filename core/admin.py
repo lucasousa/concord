@@ -36,23 +36,9 @@ class UserCreationForm(forms.ModelForm):
         return user
 
 
-# class UserChangeForm(forms.ModelForm):
-#     """
-#     A form for updating users. Includes all the fields on
-#     the user, but replaces the password field with admin's
-#     disabled password hash display field.
-#     """
-#     password = ReadOnlyPasswordHashField()
-
-#     class Meta:
-#         model = User
-#         fields = ('name', 'username', 'image', 'is_active', 'is_staff', 'password')
-    
-
-
 class UserAdmin(BaseUserAdmin):
-    # form = UserChangeForm
     add_form = UserCreationForm
+
     list_display = ('username', 'name', "is_active")
     list_filter = ('is_active',)
     fieldsets = (
@@ -66,6 +52,8 @@ class UserAdmin(BaseUserAdmin):
             'classes': ('wide',),
             'fields': ('username', 'password1', 'password2')}
         ),
+        ('Personal info', {'fields': ('name', 'image', 'is_active',)}),
+        ('Permissions', {'fields': ('is_staff',)}),
     )
 
     search_fields = ('name',)
