@@ -37,7 +37,7 @@
 
   {{ room.uuid|json_script:"json-roomuuid" }}
   {{ user.uuid|json_script:"json-useruuid" }}
-
+  {{ user.id|json_script:"json-userid" }}
 {% endblock %}
 
 {% block js %}
@@ -45,7 +45,8 @@
 
       const roomUuid = JSON.parse(document.getElementById('json-roomuuid').textContent);
       const userUuid = JSON.parse(document.getElementById('json-useruuid').textContent);
-      
+      const userid = JSON.parse(document.getElementById('json-userid').textContent);
+
       const chatSocket = new WebSocket(
           'ws://'
           + window.location.host
@@ -107,7 +108,30 @@
           messageInputDom.value = '';
         }
       };
-     
+
+      setInterval(() => {
+          fetch(`/users/${userid}/online`)
+      }, 10000)
+
+      setInterval(() => {
+          fetch(`/users`)
+            .then((response) => response.json())
+            .then(data => {
+                data.data.forEach(value => {
+                    console.log(value)
+                    let id = value[0]
+                    let status = value[1]
+                    let item = document.querySelectorAll(`#status-${id}`)
+                    if (item) {
+                        for (let pos in item){
+                            console.log('alterando')
+                            item[pos].innerHTML = status
+                        }
+                    }
+
+                })
+            })
+      }, 10000)
   </script>
 {% endblock %}
 
