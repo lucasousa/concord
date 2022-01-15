@@ -21,21 +21,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         data = json.loads(text_data)
         print("=========", data)
+        message = await self.save_message(**data)
         # Send message to room group
         await self.channel_layer.group_send(
             self.room_group_name,
-            {"type": "receive_message", **data},
+            {"type": "receive_message", **message.to_dict()},
         )
 
     async def receive_message(self, event):
         data = event.copy()
         del data["type"]
-        message = await self.save_message(**data)
         await self.send(
             text_data=json.dumps(
                 {
                     "type": "new_message",
-                    "data": message.to_dict(),
+                    "data": data,
                 }
             )
         )
