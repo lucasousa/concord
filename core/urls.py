@@ -10,6 +10,7 @@ app_name = "core"
 urlpatterns = [
     path("", views.index, name="index"),
     path("home/", views.home, name="home"),
+    path("profile/", views.profile, name="profile"),
     path(
         "entrar/",
         auth_views.LoginView.as_view(

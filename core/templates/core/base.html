@@ -8,31 +8,34 @@
   <title>Concord</title>
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
   <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
-  <link rel="stylesheet" 
-    href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" 
-    integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" 
-    crossorigin="anonymous"
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+        crossorigin="anonymous"
   >
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" 
-    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" 
-    crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+          integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+          crossorigin="anonymous">
   </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" 
-    integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" 
-    crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+          crossorigin="anonymous">
   </script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <style>
-    a{
-      color: #8e9296;
-      text-decoration: none;
-    }
-    a:hover{
-      color: #8e9296;
-      text-decoration: none;
-    }
+      a {
+          color: #8e9296;
+          text-decoration: none;
+      }
+
+      a:hover {
+          color: #8e9296;
+          text-decoration: none;
+      }
   </style>
 </head>
 <body>
@@ -40,7 +43,7 @@
 <div class="discordApp">
   <div class="server">
     <div class="server--icon active is-img">
-      <img src="{% if user.image %} {{user.image.url}} {% endif %}" alt="">
+      <img src="{% if user.image %} {{ user.image.url }} {% endif %}" alt="">
     </div>
     <div class="server--seperator"></div>
     {% for room in one_a_one %}
@@ -49,7 +52,7 @@
           {% if user.image %}
             <a href="{% url 'core:chat' room.uuid %}">
               <div class="server--icon is-img">
-                <img src="{{user.image.url}}" alt="">
+                <img src="{{ user.image.url }}" alt="">
               </div>
             </a>
           {% else %}
@@ -77,30 +80,31 @@
 
           {% for channel in channels %}
             <div class="channels--list-content">
-              
+
               <div class="channels--list-content-item">
                 <a>
                   <span><i class="fas fa-hashtag"></i></span>
                 </a>
-                
+
                 <!-- <a href="{% url 'core:chat' channel.uuid %}" onclick="selectRoom(`{{channel.id}}`,`{{channel.name}}`,`{{channel.get_users}}`)">
                   <h5>{{channel.name}}</h5>
                 </a> -->
 
                 <a href="{% url 'core:chat' channel.uuid %}">
-                  <h5>{{channel.name}}</h5>
+                  <h5>{{ channel.name }}</h5>
                 </a>
-                
+
                 <div style="margin-left: 20px; font-size: 14px;">
-                  <a href="#" title="Editar canal" onclick="updateRoom(`{{channel.id}}`, `{{channel.name}}`, `{{channel.every_one_send_message}}` , `{{channel.type}}`,`{{channel.get_users}}`  )">
+                  <a href="#" title="Editar canal"
+                     onclick="updateRoom(`{{ channel.id }}`, `{{ channel.name }}`, `{{ channel.every_one_send_message }}` , `{{ channel.type }}`,`{{ channel.get_users }}`  )">
                     <i class="fas fa-edit"></i>
                   </a>
-                  
-                  <a href="#" title="Excluir canal" onclick="deleteRoom(`{{channel.id}}`, `{{channel.name}}`)">
+
+                  <a href="#" title="Excluir canal" onclick="deleteRoom(`{{ channel.id }}`, `{{ channel.name }}`)">
                     <i class="fas fa-trash"></i>
                   </a>
                 </div>
-              
+
               </div>
             </div>
           {% endfor %}
@@ -115,36 +119,38 @@
           </div>
 
           {% for group in groups %}
-          <div class="channels--list-content">
-            <div class="channels--list-content-item">
-              <a>
-                <span><i class="fas fa-hashtag"></i></span>
-              </a>
-              <!-- <a href="#" onclick="selectRoom(`{{group.id}}`,`{{group.name}}`,`{{group.get_users}}`)">
+            <div class="channels--list-content">
+              <div class="channels--list-content-item">
+                <a>
+                  <span><i class="fas fa-hashtag"></i></span>
+                </a>
+                <!-- <a href="#" onclick="selectRoom(`{{group.id}}`,`{{group.name}}`,`{{group.get_users}}`)">
                 <h5>{{group.name}}</h5>
               </a> -->
 
-              <a href="{% url 'core:chat' group.uuid %}">
-                <h5>{{group.name}}</h5>
-              </a>
+                <a href="{% url 'core:chat' group.uuid %}">
+                  <h5>{{ group.name }}</h5>
+                </a>
 
-              <div style="margin-left: 20px; font-size: 14px;">
-                <a href="#" title="Editar grupo" onclick="updateRoom(`{{group.id}}`, `{{group.name}}`, `{{group.every_one_send_message}}` , `{{group.type}}`,`{{group.get_users}}`  )">
-                  <i class="fas fa-edit"></i>
-                </a>
-                
-                <a href="#" title="Excluir grupo" onclick="deleteRoom(`{{group.id}}`, `{{group.name}}`)">
-                  <i class="fas fa-trash"></i>
-                </a>
+                <div style="margin-left: 20px; font-size: 14px;">
+                  <a href="#" title="Editar grupo"
+                     onclick="updateRoom(`{{ group.id }}`, `{{ group.name }}`, `{{ group.every_one_send_message }}` , `{{ group.type }}`,`{{ group.get_users }}`  )">
+                    <i class="fas fa-edit"></i>
+                  </a>
+
+                  <a href="#" title="Excluir grupo" onclick="deleteRoom(`{{ group.id }}`, `{{ group.name }}`)">
+                    <i class="fas fa-trash"></i>
+                  </a>
+                </div>
+
               </div>
 
-            </div>
 
-            
-          </div>
+            </div>
           {% endfor %}
 
-          <form method="POST" action="{% url 'rooms:room_delete' %}" id="form_delete_room" class="d-none"> {% csrf_token %}
+          <form method="POST" action="{% url 'rooms:room_delete' %}" id="form_delete_room"
+                class="d-none"> {% csrf_token %}
             <input type="text" name="room_id_delete" id="room_id_delete">
           </form>
 
@@ -155,7 +161,7 @@
       <div class="channels--userArea">
         <div class="name">
           <span class="userIcon">
-            <img src="{%  if user.image %} {{user.image.url}} {% endif %}" alt="">
+            <img src="{% if user.image %} {{ user.image.url }} {% endif %}" alt="">
           </span>
           <div class="title">
             <h4 style="font-size: 17px;">{{user.username}}</h4>
@@ -177,8 +183,8 @@
         <div class="header">
           <span>#</span>
           <h2 id="room_selected">
-            {% if room and not room.one_a_one %} 
-              {{ room.name }} 
+            {% if room and not room.one_a_one %}
+              {{ room.name }}
             {% elif room %}
               {% for user in room.user.all %}
                 {% if not user == request.user %}
@@ -200,7 +206,7 @@
           {% for member in members %}
             <div class="member">
               <span class="userIcon">
-                <img src="{% if member.image %} {{member.image.url}} {% endif %}" alt="">
+                <img src="{% if member.image %} {{ member.image.url }} {% endif %}" alt="">
               </span>
               <div class="title">
                 <div style="display:flex; flex-direction: row; align-items: center; font-size: 13px">
@@ -217,7 +223,8 @@
           {% endfor %}
         </div>
 
-        <form method="POST" action="{% url 'rooms:room_remove_participant' %}" id="form_remove_participant" class="d-none"> {% csrf_token %}
+        <form method="POST" action="{% url 'rooms:room_remove_participant' %}" id="form_remove_participant"
+              class="d-none"> {% csrf_token %}
           <input type="text" name="id_participant" id="id_participant">
           <input type="text" name="id_room" id="id_room">
         </form>
@@ -228,13 +235,13 @@
 </div>
 
 <div class="modal fade" id="profile" tabindex="-1" role="dialog"
-    aria-labelledby="addFriend" aria-hidden="true">
+     aria-labelledby="addFriend" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content modal-remove-friend" style="background-color: #6272a4;">
 
       <div class="modal-header" style="border: none">
         <h5 class="modal-title">
-            <span class="text-modal-title"></span>
+          <span class="text-modal-title"></span>
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -242,53 +249,51 @@
       </div>
 
 
-      <div class="modal-body" id="modal-body-friendship" >
-        <form method = "post" enctype="multipart/form-data">
+      <div class="modal-body" id="modal-body-friendship">
+        <form method="post" enctype="multipart/form-data" action="{% url 'core:profile' %}">
+          {{ profile_form1.name }}
           {% csrf_token %}
           <div class="account-settings">
-              <div class="user-profile d-flex flex-column align-items-center">
-                <div class="user-avatar d-flex flex-column align-items-center">
-                  <img src="{%  if user.image %} {{user.image.url}} {% endif %}" id="image_viewer" class="border">
-                  <div class="m-4">
-                    <label  class="btn bg-info m-2" for="id_image">Upload</label>
-                    <label  class="btn bg-warning m-2" onclick="delete_image()">Excluir</label>
-                    <div class="text-danger">
-                      {{ profile_form.errors.image }}
-                    </div>
+            <div class="user-profile d-flex flex-column align-items-center">
+              <div class="user-avatar d-flex flex-column align-items-center">
+                <img src="{% if user.image %} {{ user.image.url }} {% endif %}" id="image_viewer" class="border">
+                <div class="m-4">
+                  <label class="btn bg-info m-2" for="id_image">Upload</label>
+                  <label class="btn bg-warning m-2" onclick="delete_image()">Excluir</label>
+                  <div class="text-danger">
+                    {{ profile_form.errors.image }}
+                  </div>
 
-                    <div class="d-none">
-                      Currently: <a href="/media/media/avatar/ALIGER-ANEFUS-TRANSP-crop_nyng5p1.png">media/avatar/ALIGER-ANEFUS-TRANSP-crop_nyng5p1.png</a>
-                      <input type="checkbox" name="image-clear" id="image-clear_id">
-                      <label for="image-clear_id">Clear</label><br>
-                      Change:
-                      <input type="file" name="image" accept="image/*" id="id_image">
-                    </div>
+                  <div class="d-none">
+                    <input type="checkbox" name="image-clear" id="image-clear_id">
+                    <input type="file" name="image" accept="image/*" id="id_image">
                   </div>
                 </div>
-
-                <div class="user-name">
-                  {{ profile_form.name.label }}:
-                  <br>
-                  {{ profile_form.name | add_class:'custom-input'}}
-                  <i class="fas fa-edit"></i>
-                </div>
-                <div class="text-danger">
-                    {{ profile_form.errors.name }}
-                </div>
-                <br>
-
-                <div class="user-name">
-                  {{ profile_form.username.label }}:
-                  <br>
-                  {{ profile_form.username | add_class:'custom-input'}}
-                  <i class="fas fa-edit"></i>
-                </div>
-                <div class="text-danger">
-                  {{ profile_form.errors.username }}
-                </div>
-                <br>
-                <input class="btn btn-danger" type="submit" value="Editar">
               </div>
+
+              <div class="user-name">
+                {{ profile_form.name.label }}:
+                <br>
+                {{ profile_form.name | add_class:'custom-input' }}
+                <i class="fas fa-edit"></i>
+              </div>
+              <div class="text-danger">
+                {{ profile_form.errors.name }}
+              </div>
+              <br>
+
+              <div class="user-name">
+                {{ profile_form.username.label }}:
+                <br>
+                {{ profile_form.username | add_class:'custom-input' }}
+                <i class="fas fa-edit"></i>
+              </div>
+              <div class="text-danger">
+                {{ profile_form.errors.username }}
+              </div>
+              <br>
+              <input class="btn btn-danger" type="submit" value="Editar">
+            </div>
           </div>
         </form>
 
@@ -299,14 +304,14 @@
 </div>
 
 
-<div class="modal fade" id="addChannel" tabindex="-1" role="dialog" 
-    aria-labelledby="addFriend" aria-hidden="true">
+<div class="modal fade" id="addChannel" tabindex="-1" role="dialog"
+     aria-labelledby="addFriend" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content modal-remove-friend" style="background-color: #6272a4;">
 
       <div class="modal-header" style="border: none">
         <h5 class="modal-title">
-            <span class="text-modal-title">Adicionar</span> nova Sala
+          <span class="text-modal-title">Adicionar</span> nova Sala
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -316,50 +321,51 @@
 
       <div class="modal-body" id="modal-body-friendship">
         <form class="col-md-12 info" action="{% url 'rooms:room' %}" method="POST" id="form_room">{% csrf_token %}
-            
-            <div class="box">
-                <label>Nome da Sala:</label>
-                  <input required id="name" name="name" type="text" autofocus 
-                      style="border-left: none; border-top: none; border-right: none; outline: none; background-color: #6272a4; width: 100%; border-bottom: 1px solid black;">
-            </div>
-            
-            <br>
 
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value=true id="flexCheckDefault" name="every_one_send_message">
-              <label class="form-check-label" for="flexCheckDefault">
-                  Todos podem enviar mensagens
-              </label>
-            </div>
+          <div class="box">
+            <label>Nome da Sala:</label>
+            <input required id="name" name="name" type="text" autofocus
+                   style="border-left: none; border-top: none; border-right: none; outline: none; background-color: #6272a4; width: 100%; border-bottom: 1px solid black;">
+          </div>
 
-            <br>
+          <br>
 
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="type" value="privado" id="privado" checked>
-              <label class="form-check-label" for="flexRadioDefault2">
-                Privado
-              </label>
-            </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value=true id="flexCheckDefault"
+                   name="every_one_send_message">
+            <label class="form-check-label" for="flexCheckDefault">
+              Todos podem enviar mensagens
+            </label>
+          </div>
 
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="type" value="publico" id="publico">
-              <label class="form-check-label" for="flexRadioDefault1">
-                Público
-              </label>
-            </div>
+          <br>
+
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="type" value="privado" id="privado" checked>
+            <label class="form-check-label" for="flexRadioDefault2">
+              Privado
+            </label>
+          </div>
+
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="type" value="publico" id="publico">
+            <label class="form-check-label" for="flexRadioDefault1">
+              Público
+            </label>
+          </div>
 
 
-            <br>
+          <br>
 
-            <div class="box" id="participants_input">
-              <label>Participantes: (Usernames separados por vírgula)</label>
-                <input id="users" type="text" name="users" 
-                    style="border-left: none; border-top: none; border-right: none; outline: none; background-color: #6272a4; width: 100%; border-bottom: 1px solid black;">
+          <div class="box" id="participants_input">
+            <label>Participantes: (Usernames separados por vírgula)</label>
+            <input id="users" type="text" name="users"
+                   style="border-left: none; border-top: none; border-right: none; outline: none; background-color: #6272a4; width: 100%; border-bottom: 1px solid black;">
 
-            </div>
+          </div>
 
-            <input class="d-none" name="room" id="room">
-            <input class="d-none" name="users_list" id="users_list">
+          <input class="d-none" name="room" id="room">
+          <input class="d-none" name="users_list" id="users_list">
 
           <div class="modal-footer info" id="modal-footer-add" style="border: none">
             <button type="button" class="btn" data-dismiss="modal">Cancelar</button>
@@ -370,7 +376,7 @@
 
           <div class="modal-footer info" id="modal-footer-update" style="border: none; display: none;">
             <button type="button" class="btn" data-dismiss="modal">Cancelar</button>
-            <button type="button" class="btn btn-add-friend"  onclick="saveUpdate()">
+            <button type="button" class="btn btn-add-friend" onclick="saveUpdate()">
               Atualizar
             </button>
           </div>
@@ -379,35 +385,34 @@
         </form>
       </div>
 
-    
-    
+
     </div>
   </div>
 </div>
 
-  <style>
-    ol{
-      justify-content: center;
-      align-items: center;
+<style>
+    ol {
+        justify-content: center;
+        align-items: center;
     }
-  </style>
+</style>
 
 <script>
 
-  {% if profile_form.errors %}
-      $('#profile').modal('show');
-  {% endif %}
+    {% if profile_form.errors %}
+        $('#profile').modal('show');
+    {% endif %}
 
-  async function selectRoom(id, name, users){
-    const jsonObject = await JSON.parse(users.replaceAll(`'`,`"`));
-    document.getElementById('room_selected').textContent = name;
+    async function selectRoom(id, name, users) {
+        const jsonObject = await JSON.parse(users.replaceAll(`'`, `"`));
+        document.getElementById('room_selected').textContent = name;
 
-    const membersArea = document.getElementById('members');
-    membersArea.innerHTML = "";
+        const membersArea = document.getElementById('members');
+        membersArea.innerHTML = "";
 
-    jsonObject.forEach((obj)=>{
-      membersArea.insertAdjacentHTML("beforeend", 
-        `
+        jsonObject.forEach((obj) => {
+            membersArea.insertAdjacentHTML("beforeend",
+                `
           <div class="member">
             <span class="userIcon">
               <img src="{%  if user.image %} {{user.image.url}} {% endif %}" alt="">
@@ -424,55 +429,55 @@
           </div>
         
         `
-      );
-    });
-  }
-
-  function deleteRoom(idRoom, nameRoom){
-    if (confirm(`Deseja excluir a sala ${nameRoom}`) == true) {
-      document.getElementById('room_id_delete').value = idRoom;
-      document.getElementById('form_delete_room').submit();
-    } 
-  }
-
-  function removeParticipant(idParticipant, name, idRoom, users){
-    if (confirm(`Deseja remover ${name} da sala ?`) == true) {
-      document.getElementById('id_participant').value = idParticipant;
-      document.getElementById('id_room').value = idRoom;
-      document.getElementById('form_remove_participant').submit();
-    } 
-  }
-
-  async function updateRoom(id, name, flag, type, users){
-    $('#addChannel').modal('show');
-    
-    document.querySelectorAll('.text-modal-title').forEach((element)=>{
-      element.textContent="Atualizar"
-    })
-    document.getElementById("name").value = name;
-    
-    if(flag == "True"){
-      document.getElementById('flexCheckDefault').checked;
+            );
+        });
     }
 
-    document.getElementById('privado').checked = false;
-    document.getElementById('publico').checked = false;
-    if(type=="privado"){
-      document.getElementById('privado').checked = true;
-    }else{
-      document.getElementById('publico').checked = true;
+    function deleteRoom(idRoom, nameRoom) {
+        if (confirm(`Deseja excluir a sala ${nameRoom}`) == true) {
+            document.getElementById('room_id_delete').value = idRoom;
+            document.getElementById('form_delete_room').submit();
+        }
     }
 
+    function removeParticipant(idParticipant, name, idRoom, users) {
+        if (confirm(`Deseja remover ${name} da sala ?`) == true) {
+            document.getElementById('id_participant').value = idParticipant;
+            document.getElementById('id_room').value = idRoom;
+            document.getElementById('form_remove_participant').submit();
+        }
+    }
 
-    const participants = document.getElementById("participants_input")
-    participants.innerHTML= "<label>Participantes</label>";
+    async function updateRoom(id, name, flag, type, users) {
+        $('#addChannel').modal('show');
 
-    const jsonObject = await JSON.parse(users.replaceAll(`'`,`"`));
-    console.log(jsonObject)
+        document.querySelectorAll('.text-modal-title').forEach((element) => {
+            element.textContent = "Atualizar"
+        })
+        document.getElementById("name").value = name;
 
-    jsonObject.forEach((obj)=>{
-      participants.insertAdjacentHTML("beforeend", 
-        `
+        if (flag == "True") {
+            document.getElementById('flexCheckDefault').checked;
+        }
+
+        document.getElementById('privado').checked = false;
+        document.getElementById('publico').checked = false;
+        if (type == "privado") {
+            document.getElementById('privado').checked = true;
+        } else {
+            document.getElementById('publico').checked = true;
+        }
+
+
+        const participants = document.getElementById("participants_input")
+        participants.innerHTML = "<label>Participantes</label>";
+
+        const jsonObject = await JSON.parse(users.replaceAll(`'`, `"`));
+        console.log(jsonObject)
+
+        jsonObject.forEach((obj) => {
+            participants.insertAdjacentHTML("beforeend",
+                `
           <div class="form-check">
             <input class="form-check-input check-update" type="checkbox" checked value=${obj.id}>
             <label class="form-check-label" for="flexCheckDefault">
@@ -481,44 +486,59 @@
           </div>  
         
         `
-      );
-    });
+            );
+        });
 
-    document.getElementById("modal-footer-add").style = "display:none;border:none"
-    document.getElementById("modal-footer-update").style = "border:none"
-    document.getElementById("room").value = id
-  
-  }
+        document.getElementById("modal-footer-add").style = "display:none;border:none"
+        document.getElementById("modal-footer-update").style = "border:none"
+        document.getElementById("room").value = id
 
-  function saveUpdate(){
-    const users = []
-    document.querySelectorAll('.check-update').forEach((el)=>{
-      if(el.checked){
-        users.push(el.value)
-      }
-    })
-    document.getElementById("users_list").value = users.join(',')
-    document.getElementById("form_room").submit()
-  }
-
-  id_image = document.getElementById("id_image")
-  image_viewer = document.getElementById("image_viewer")
-  id_image.onchange = evt => {
-    const [file] = id_image.files
-    if (file) {
-      image_viewer.src = URL.createObjectURL(file)
     }
-  }
 
-  function delete_image(){
-      image_viewer.src = ""
-      document.querySelector("#image-clear_id").checked = true
-  }
+    function saveUpdate() {
+        const users = []
+        document.querySelectorAll('.check-update').forEach((el) => {
+            if (el.checked) {
+                users.push(el.value)
+            }
+        })
+        document.getElementById("users_list").value = users.join(',')
+        document.getElementById("form_room").submit()
+    }
+
+    id_image = document.getElementById("id_image")
+    image_viewer = document.getElementById("image_viewer")
+    id_image.onchange = evt => {
+        const [file] = id_image.files
+        if (file) {
+            image_viewer.src = URL.createObjectURL(file)
+        }
+    }
+
+    function delete_image() {
+        image_viewer.src = ""
+        document.querySelector("#image-clear_id").checked = true
+    }
+
+
 </script>
-
 {% block js %}
 {% endblock %}
 
+{% for message in messages %}
+  <script>
+      Swal.fire({
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          toast: true,
+          background: "#212529",
+          color: "#FFF",
+          icon: '{{ message.tags }}',
+          title: '{{ message }}'
+      })
+  </script>
+{% endfor %}
 
 </body>
 </html>
