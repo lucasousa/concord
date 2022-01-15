@@ -10,7 +10,6 @@ from core.models import User
 def room(request):
     if request.method == "POST":
         datas = request.POST
-        print("datas ", datas)
 
         if datas.get('room', False):
             room = Room.objects.get(id=datas["room"])

@@ -32,6 +32,8 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
 # Application definition
 
 INSTALLED_APPS = [
+    "channels",
+    
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -73,7 +75,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "concord.wsgi.application"
+# WSGI_APPLICATION = "concord.wsgi.application"
+ASGI_APPLICATION = "concord.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
@@ -104,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "pt-br"
 
 TIME_ZONE = "UTC"
 
@@ -134,3 +137,33 @@ LOGIN_URL = 'core:login'
 LOGOUT_URL = 'core:logout'
 LOGIN_REDIRECT_URL = 'core:home'
 LOGOUT_REDIRECT_URL = 'core:login'
+
+BROKER_URL = 'redis://redis:6379/0'
+
+CELERY_BROKER_URL = BROKER_URL
+
+CELERY_RESULT_BACKEND = BROKER_URL
+
+CELERY_ACCEPT_CONTENT = ['application/json']
+
+CELERY_TASK_SERIALIZER = 'json'
+
+CELERY_RESULT_SERIALIZER = 'json'
+
+CELERY_TIMEZONE = TIME_ZONE
+
+CELERY_ACKS_LATE = True
+
+CELERYD_PREFETCH_MULTIPLIER = 1
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [(config("HOST_REDIS"), 6379)],
+            "capacity": 1500,
+            "expiry": 60,
+        },
+    },
+}

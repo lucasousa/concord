@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Concord</title>
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
   <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
   <link rel="stylesheet" 
@@ -212,13 +212,13 @@
           </div>
 
           </br>
-{#           {% if user.image %}#}
+           {% if user.image %}
               <div class="columns">
                 <div class="column">
                   <a href="{{ user.image.url }}" class="button text-dark">Atual: {{ user.image.name }}</a>
                 </div>
               </div>
-{#          {% endif %}#}
+          {% endif %}
 
           <div class="box">
             <label>Imagem:</label>
@@ -445,7 +445,11 @@
     document.getElementById("users_list").value = users.join(',')
     document.getElementById("form_room").submit()
   }
+  
 </script>
+
+{% block js %}
+{% endblock %}
 
 
 </body>

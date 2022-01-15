@@ -14,4 +14,5 @@ urlpatterns = [
         redirect_authenticated_user=True
     ),  name='login'),
     path('sair/', auth_views.LogoutView.as_view(), name='logout'),
+    path("chat/", views.chat, name="chat"),
 ]

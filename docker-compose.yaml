@@ -1,0 +1,30 @@
+version: "3.9"
+   
+services:
+  web:
+    build: .
+    restart: always
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code:delegated
+    ports:
+      - "8000:8000"
+  
+  celery:
+    build: .
+    restart: always
+    command: "celery -A concord worker -l info -B"
+    volumes: 
+        - .:/code
+    ports:
+        - "5555:5555"
+    depends_on:
+        - web
+        - redis
+
+  redis:
+      image: "redis:alpine"
+      command: redis-server
+      ports: 
+          - "6379:6379"
+    
