@@ -15,4 +15,6 @@ urlpatterns = [
     ),  name='login'),
     path('sair/', auth_views.LogoutView.as_view(), name='logout'),
     path("chat/", views.chat, name="chat"),
+    path('users/', views.get_statuses, name="status"),
+    path('users/<int:id>/<str:status>', views.update_lastping, name="last_ping")
 ]

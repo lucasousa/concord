@@ -33,7 +33,7 @@
   {{ group.uuid|json_script:"json-roomuuid" }}
   {{ group.name|lower|json_script:"json-roomname" }}
   {{ user.uuid|json_script:"json-useruuid" }}
-
+  {{ user.id|json_script:"json-userid" }}
 {% endblock %}
 
 {% block js %}
@@ -41,8 +41,9 @@
 
       const roomUuid = JSON.parse(document.getElementById('json-roomuuid').textContent);
       const userUuid = JSON.parse(document.getElementById('json-useruuid').textContent);
+      const userid = JSON.parse(document.getElementById('json-userid').textContent);
       const roomName = JSON.parse(document.getElementById('json-roomname').textContent);
-      
+
       const chatSocket = new WebSocket(
           'ws://'
           + window.location.host
@@ -53,7 +54,6 @@
 
       chatSocket.onmessage = function(e) {
           const data = JSON.parse(e.data);
-
           if (data.message) {
               document.querySelector('#chat-messages').innerHTML += ('<b>' + data.username + '</b>: ' + data.message + '<br>');
           } else {
@@ -77,6 +77,31 @@
 
           messageInputDom.value = '';
       };
+
+      setInterval(() => {
+          fetch(`/users/${userid}/online`)
+      }, 2000)
+
+      setInterval(() => {
+          fetch(`/users`)
+            .then((response) => response.json())
+            .then(data => {
+                data.data.forEach(value => {
+                    console.log(value)
+                    let id = value[0]
+                    let status = value[1]
+                    let item = document.querySelector(`#status-${id}`)
+                    if (item) {
+                        item.innerHTML = status
+                    }
+
+                })
+            })
+      }, 2000)
+
+
+
+
      
   </script>
 {% endblock %}

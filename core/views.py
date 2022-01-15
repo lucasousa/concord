@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 
 from rooms.models import Message, Room
@@ -61,7 +62,7 @@ def profile(request):
     
     
 @login_required
-def chat(request, id):
+def chat(request):
     user = get_object_or_404(User, pk=request.user.pk)
     group = Room.objects.filter(user=user).first()
     messages = Message.objects.filter(room=group).order_by("created_at")
@@ -69,9 +70,33 @@ def chat(request, id):
     context = {
         "messages": messages,
         "group": group,
-        "user":user
+        "user": user
     }
 
     return render(request, "core/home.html", context)
+
+
+def update_lastping(request, id, status):
+    user = User.objects.get(id=id)
+    user.last_ping = timezone.now()
+    user.status = status
+    user.save()
+    return JsonResponse(data={'success': True})
+
+def get_statuses(request):
+    ret = []
+    users = User.objects.all().values_list('id', 'status', 'last_ping')
+    for user in users:
+        print(user)
+        if user[1] == 'offline' or user[2] is None or user[2] < timezone.now() - timezone.timedelta(minutes=0.5):
+            ret.append(([user[0]], 'offline', user[2]))
+        else:
+            ret.append(user)
+    data = {'data': ret}
+    return JsonResponse(data=data, safe=False)
+
+
+
+
 
 
