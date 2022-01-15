@@ -1,3 +1,4 @@
+{% load widget_tweaks %}
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
@@ -39,18 +40,24 @@
 <div class="discordApp">
   <div class="server">
     <div class="server--icon active is-img">
-      <img src="https://bulma.io/images/placeholders/64x64.png" alt="">
+      <img src="{% if user.image %} {{user.image.url}} {% endif %}" alt="">
     </div>
     <div class="server--seperator"></div>
-    <div class="server--icon">
-      <span>Gab</span>
-    </div>
-    <div class="server--icon">
-      <span>Joã</span>
-    </div>
-    <div class="server--icon">
-      <span>Mar</span>
-    </div>
+    {% for room in one_a_one %}
+      {% for user in room.user.all %}
+        {% if not user == request.user %}
+          {% if user.image %}
+            <a href="{% url 'core:chat' room.uuid %}">
+              <div class="server--icon is-img">
+                <img src="{{user.image.url}}" alt="">
+              </div>
+            </a>
+          {% else %}
+            <span>{{ user.name|truncatechars:3|capfirst }}</span>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
   </div>
   <div class="chatOuter">
     <div class="channels">
@@ -76,7 +83,11 @@
                   <span><i class="fas fa-hashtag"></i></span>
                 </a>
                 
-                <a href="#" onclick="selectRoom(`{{channel.id}}`,`{{channel.name}}`,`{{channel.get_users}}`)">
+                <!-- <a href="{% url 'core:chat' channel.uuid %}" onclick="selectRoom(`{{channel.id}}`,`{{channel.name}}`,`{{channel.get_users}}`)">
+                  <h5>{{channel.name}}</h5>
+                </a> -->
+
+                <a href="{% url 'core:chat' channel.uuid %}">
                   <h5>{{channel.name}}</h5>
                 </a>
                 
@@ -109,7 +120,11 @@
               <a>
                 <span><i class="fas fa-hashtag"></i></span>
               </a>
-              <a href="#" onclick="selectRoom(`{{group.id}}`,`{{group.name}}`,`{{group.get_users}}`)">
+              <!-- <a href="#" onclick="selectRoom(`{{group.id}}`,`{{group.name}}`,`{{group.get_users}}`)">
+                <h5>{{group.name}}</h5>
+              </a> -->
+
+              <a href="{% url 'core:chat' group.uuid %}">
                 <h5>{{group.name}}</h5>
               </a>
 
@@ -140,7 +155,7 @@
       <div class="channels--userArea">
         <div class="name">
           <span class="userIcon">
-            <img src="https://bulma.io/images/placeholders/128x128.png" alt="">
+            <img src="{%  if user.image %} {{user.image.url}} {% endif %}" alt="">
           </span>
           <div class="title">
             <h4 style="font-size: 17px;">{{user.username}}</h4>
@@ -161,7 +176,19 @@
       <nav>
         <div class="header">
           <span>#</span>
-          <h2 id="room_selected">Nenhuma sala selecionada</h2>
+          <h2 id="room_selected">
+            {% if room and not room.one_a_one %} 
+              {{ room.name }} 
+            {% elif room %}
+              {% for user in room.user.all %}
+                {% if not user == request.user %}
+                  {{ user.name }}
+                {% endif %}
+              {% endfor %}
+            {% else %}
+              Nenhuma sala selecionada
+            {% endif %}
+          </h2>
         </div>
       </nav>
       <div class="chat--inner">
@@ -169,7 +196,26 @@
         {% block content %}
         {% endblock %}
 
-        <div class="members" id="members"></div>
+        <div class="members" id="members">
+          {% for member in members %}
+            <div class="member">
+              <span class="userIcon">
+                <img src="{% if member.image %} {{member.image.url}} {% endif %}" alt="">
+              </span>
+              <div class="title">
+                <div style="display:flex; flex-direction: row; align-items: center; font-size: 13px">
+                  <h4>{{ member.name }}</h4>
+                  {% if room %}
+                    <a href="#" onclick="removeParticipant( '{{ member.id }}' , '{{ member.name }}', '{{ room.id }}' )">
+                      <i class="fas fa-times" style="margin-left: 20px" style="margin-left: 30px"> Remover </i>
+                    </a>
+                  {% endif %}
+                </div>
+                <span class="subText">{{ member.status }}</span>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
 
         <form method="POST" action="{% url 'rooms:room_remove_participant' %}" id="form_remove_participant" class="d-none"> {% csrf_token %}
           <input type="text" name="id_participant" id="id_participant">
@@ -188,7 +234,7 @@
 
       <div class="modal-header" style="border: none">
         <h5 class="modal-title">
-            <span class="text-modal-title">Editar Profile</span>
+            <span class="text-modal-title"></span>
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -197,42 +243,53 @@
 
 
       <div class="modal-body" id="modal-body-friendship" >
-        <form action="" method="post">
+        <form method = "post" enctype="multipart/form-data">
           {% csrf_token %}
-          <div class="box">
-            <label>Name:</label>
-            <input type="text" value="{{user.name}}" name="name" maxlength="50" id="id_name" autofocus
-                   style="border-left: none; border-top: none; border-right: none; outline: none; background-color: #6272a4; width: 100%; border-bottom: 1px solid black;">
-          </div>
-          <div class="box">
-            <label>Username:</label>
-            <input id="id_username"  name="username" type="text" value="{{user.username}}" name="username" maxlength="50" id="id_username"
-                   style="border-left: none; border-top: none; border-right: none; outline: none; background-color: #6272a4; width: 100%; border-bottom: 1px solid black;">
+          <div class="account-settings">
+              <div class="user-profile d-flex flex-column align-items-center">
+                <div class="user-avatar d-flex flex-column align-items-center">
+                  <img src="{%  if user.image %} {{user.image.url}} {% endif %}" id="image_viewer" class="border">
+                  <div class="m-4">
+                    <label  class="btn bg-info m-2" for="id_image">Upload</label>
+                    <label  class="btn bg-warning m-2" onclick="delete_image()">Excluir</label>
+                    <div class="text-danger">
+                      {{ profile_form.errors.image }}
+                    </div>
 
-          </div>
-
-          </br>
-           {% if user.image %}
-              <div class="columns">
-                <div class="column">
-                  <a href="{{ user.image.url }}" class="button text-dark">Atual: {{ user.image.name }}</a>
+                    <div class="d-none">
+                      Currently: <a href="/media/media/avatar/ALIGER-ANEFUS-TRANSP-crop_nyng5p1.png">media/avatar/ALIGER-ANEFUS-TRANSP-crop_nyng5p1.png</a>
+                      <input type="checkbox" name="image-clear" id="image-clear_id">
+                      <label for="image-clear_id">Clear</label><br>
+                      Change:
+                      <input type="file" name="image" accept="image/*" id="id_image">
+                    </div>
+                  </div>
                 </div>
+
+                <div class="user-name">
+                  {{ profile_form.name.label }}:
+                  <br>
+                  {{ profile_form.name | add_class:'custom-input'}}
+                  <i class="fas fa-edit"></i>
+                </div>
+                <div class="text-danger">
+                    {{ profile_form.errors.name }}
+                </div>
+                <br>
+
+                <div class="user-name">
+                  {{ profile_form.username.label }}:
+                  <br>
+                  {{ profile_form.username | add_class:'custom-input'}}
+                  <i class="fas fa-edit"></i>
+                </div>
+                <div class="text-danger">
+                  {{ profile_form.errors.username }}
+                </div>
+                <br>
+                <input class="btn btn-danger" type="submit" value="Editar">
               </div>
-          {% endif %}
-
-          <div class="box">
-            <label>Imagem:</label>
-            <input type="file" name="image" accept="image/*" id="id_image">
           </div>
-
-          </br>
-          {% if profile_form.errors %}
-              <h5>Erros</h5>
-              {{ profile_form.errors }}
-              </br>
-
-          {% endif %}
-          <input class="btn btn-danger" type="submit" value="Editar">
         </form>
 
       </div>
@@ -328,8 +385,6 @@
   </div>
 </div>
 
-
-
   <style>
     ol{
       justify-content: center;
@@ -355,7 +410,7 @@
         `
           <div class="member">
             <span class="userIcon">
-              <img src="https://bulma.io/images/placeholders/128x128.png" alt="">
+              <img src="{%  if user.image %} {{user.image.url}} {% endif %}" alt="">
             </span>
             <div class="title">
               <div style="display:flex; flex-direction: row; align-items: center; font-size: 13px">
@@ -445,7 +500,20 @@
     document.getElementById("users_list").value = users.join(',')
     document.getElementById("form_room").submit()
   }
-  
+
+  id_image = document.getElementById("id_image")
+  image_viewer = document.getElementById("image_viewer")
+  id_image.onchange = evt => {
+    const [file] = id_image.files
+    if (file) {
+      image_viewer.src = URL.createObjectURL(file)
+    }
+  }
+
+  function delete_image(){
+      image_viewer.src = ""
+      document.querySelector("#image-clear_id").checked = true
+  }
 </script>
 
 {% block js %}

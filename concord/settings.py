@@ -10,10 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-from decouple import config, Csv
+from decouple import Csv, config
 from dj_database_url import parse as db_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -33,7 +34,6 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
 
 INSTALLED_APPS = [
     "channels",
-    
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # third apps
     "django_extensions",
+    "widget_tweaks",
     # my apps
     "core",
     "rooms",
@@ -70,6 +71,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "core.context_processors.get_rooms",
             ],
         },
     },
@@ -121,6 +123,9 @@ AUTH_USER_MODEL = "core.User"
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = "static/"
+MEDIA_URL = "media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -128,27 +133,27 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'core.backends.ModelBackend',
+    "django.contrib.auth.backends.ModelBackend",
+    "core.backends.ModelBackend",
 )
 
-AUTH_USER_MODEL = 'core.User'
-LOGIN_URL = 'core:login'
-LOGOUT_URL = 'core:logout'
-LOGIN_REDIRECT_URL = 'core:home'
-LOGOUT_REDIRECT_URL = 'core:login'
+AUTH_USER_MODEL = "core.User"
+LOGIN_URL = "core:login"
+LOGOUT_URL = "core:logout"
+LOGIN_REDIRECT_URL = "core:home"
+LOGOUT_REDIRECT_URL = "core:login"
 
-BROKER_URL = 'redis://redis:6379/0'
+BROKER_URL = "redis://redis:6379/0"
 
 CELERY_BROKER_URL = BROKER_URL
 
 CELERY_RESULT_BACKEND = BROKER_URL
 
-CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_ACCEPT_CONTENT = ["application/json"]
 
-CELERY_TASK_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = "json"
 
-CELERY_RESULT_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = "json"
 
 CELERY_TIMEZONE = TIME_ZONE
 
@@ -158,9 +163,9 @@ CELERYD_PREFETCH_MULTIPLIER = 1
 
 
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
             "hosts": [(config("HOST_REDIS"), 6379)],
             "capacity": 1500,
             "expiry": 60,

@@ -7,11 +7,13 @@ from django.utils import timezone
 
 
 from rooms.models import Message, Room
-from .models import User
+
 from .forms import ProfileForm
+from .models import User
+
 
 def index(request):
-    if request.user.is_authenticated:        
+    if request.user.is_authenticated:
         return HttpResponseRedirect(reverse("core:home"))
 
     return HttpResponseRedirect(reverse("core:login"))
@@ -19,21 +21,15 @@ def index(request):
 
 @login_required
 def home(request):
-    profile_form = ProfileForm()
-    if request.method == 'POST' or request.method == 'PATCH':
-        profile = get_object_or_404(User, pk=request.user.pk)
+    profile_form = ProfileForm(instance=request.user)
 
-        profile_form = ProfileForm(request.POST)
-        profile_form.is_valid()
+    if request.method == "POST":
+        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user)
+
         if profile_form.is_valid():
-            # process the data in form.cleaned_data as required (here we just write it to the model due_back field)
-            profile.name = profile_form.cleaned_data['name']
-            profile.username = profile_form.cleaned_data['username']
-            profile.save()
-            return HttpResponseRedirect(reverse('core:home'))
+            profile_form.save()
 
-    groups = Room.objects.filter(every_one_send_message=True)
-    channels = Room.objects.filter(every_one_send_message=False)
+            return HttpResponseRedirect(reverse("core:home"))
 
     if not request.user.is_superuser:
         groups = []
@@ -47,34 +43,32 @@ def home(request):
             print("aqui1")
             channels = channels.objects.filter(user=request.user)
 
-    return render(request, "core/home.html",{
-            "groups": groups,
-            "channels": channels,
-            "profile_form": profile_form
-        }
+    return render(
+        request,
+        "core/home.html",
+        {"profile_form": profile_form, "members": User.objects.filter(is_active=True)},
     )
 
 
 @login_required
 def profile(request):
     return render(request, "core/profile.html")
-    
-    
-    
+
+
 @login_required
-def chat(request):
-    user = get_object_or_404(User, pk=request.user.pk)
-    group = Room.objects.filter(user=user).first()
-    messages = Message.objects.filter(room=group).order_by("created_at")
+def chat(request, uuid):
+    room = get_object_or_404(Room, uuid=uuid, user=request.user)
+    messages = Message.objects.filter(room=room).order_by("created_at")
 
     context = {
         "messages": messages,
-        "group": group,
-        "user": user
+        "room": room,
+        "user": request.user,
+        "members": room.user.filter(is_active=True),
     }
 
     return render(request, "core/home.html", context)
-
+    
 
 def update_lastping(request, id, status):
     user = User.objects.get(id=id)
@@ -82,6 +76,7 @@ def update_lastping(request, id, status):
     user.status = status
     user.save()
     return JsonResponse(data={'success': True})
+
 
 def get_statuses(request):
     ret = []
@@ -94,9 +89,3 @@ def get_statuses(request):
             ret.append(user)
     data = {'data': ret}
     return JsonResponse(data=data, safe=False)
-
-
-
-
-
-
