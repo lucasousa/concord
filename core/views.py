@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from datetime import datetime
 
 
 from rooms.models import Message, Room
@@ -80,12 +81,10 @@ def update_lastping(request, id, status):
 
 def get_statuses(request):
     ret = []
+    User.objects.filter(
+        last_ping__lte=timezone.now()-timezone.timedelta(minutes=0.5),
+        status=User.STATUS_ONLINE
+    ).update(status=User.STATUS_OFFLINE)
     users = User.objects.all().values_list('id', 'status', 'last_ping')
-    for user in users:
-        print(user)
-        if user[1] == 'offline' or user[2] is None or user[2] < timezone.now() - timezone.timedelta(minutes=0.5):
-            ret.append(([user[0]], 'offline', user[2]))
-        else:
-            ret.append(user)
-    data = {'data': ret}
+    data = {'data': list(users)}
     return JsonResponse(data=data, safe=False)
