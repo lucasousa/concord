@@ -9,18 +9,6 @@ services:
       - .:/code:delegated
     ports:
       - "8000:8000"
-  
-  celery:
-    build: .
-    restart: always
-    command: "celery -A concord worker -l info -B"
-    volumes: 
-        - .:/code
-    ports:
-        - "5555:5555"
-    depends_on:
-        - web
-        - redis
 
   redis:
       image: "redis:alpine"

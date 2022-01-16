@@ -20,7 +20,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Receive message from web socket
     async def receive(self, text_data):
         data = json.loads(text_data)
-        print("=========", data)
         message = await self.save_message(**data)
         # Send message to room group
         await self.channel_layer.group_send(
