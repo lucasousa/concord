@@ -19,4 +19,5 @@ urlpatterns = [
     ),
     path("sair/", auth_views.LogoutView.as_view(), name="logout"),
     path("chat/<uuid:uuid>/", views.chat, name="chat"),
+    path("users/<int:room>/", views.users_without_rooms, name="users_without_rooms"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

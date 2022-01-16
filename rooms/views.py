@@ -1,5 +1,6 @@
+import json
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
@@ -27,12 +28,14 @@ def room(request):
             room.save()
 
         else:
+            users_ids = request.POST.getlist('usersNewRoom')
             new_room = Room.objects.create(name=datas["name"], type=datas["type"])
             if not datas.get("every_one_send_message", False):
                 new_room.every_one_send_message = False
 
-            users = User.objects.filter(username__in=datas["users"].split(","))
+            users = User.objects.filter(id__in=users_ids)
             new_room.user.add(*users)
+            new_room.user.add(request.user)
             new_room.save()
 
         return HttpResponseRedirect(reverse("core:home"))
@@ -56,6 +59,16 @@ def room_remove_participant(request):
 
         room.user.remove(user)
         
-        return HttpResponseRedirect(reverse("core:home"))
+        if user.id == request.user.id:
+            return HttpResponseRedirect(reverse("core:home"))
+        else:
+            return HttpResponseRedirect(reverse("core:chat", kwargs={"uuid":room.uuid}))
 
+@login_required
+def add_new_members(request):
+    datas = json.loads(request.body.decode("utf-8"))
 
+    room = Room.objects.get(id=datas["room"])
+    users = User.objects.filter(id__in=datas["users"])
+    room.user.add(*users)
+    return JsonResponse({"status": "ok"}, safe=False)
