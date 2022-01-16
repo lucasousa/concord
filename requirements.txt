@@ -10,7 +10,6 @@ backcall==0.2.0
 backports.zoneinfo==0.2.1
 billiard==3.6.4.0
 black==21.12b0
-celery==5.2.3
 cffi==1.15.0
 channels==3.0.4
 channels-redis==3.3.1

@@ -287,6 +287,7 @@ body {
 .messages .messages--send {
   margin-top: auto;
   padding: 15px;
+  width: 64.3%;
 }
 
 .messages .messages--send input {
@@ -297,6 +298,20 @@ body {
   border-radius: 10px;
   padding: 10px;
   color: white;
+}
+
+.messages::-webkit-scrollbar {
+  width: 10px;               /* width of the entire scrollbar */
+}
+
+.messages::-webkit-scrollbar-track {
+  background:#363A3E;
+}
+
+.messages::-webkit-scrollbar-thumb {
+  background-color: #40454a;    /* color of the scroll thumb */
+  border-radius: 20px;       /* roundness of the scroll thumb */
+  border: 3px solid #40454a;  /* creates padding around scroll thumb */
 }
 
 .members {
