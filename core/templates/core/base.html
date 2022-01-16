@@ -95,12 +95,8 @@
                 <a href="{% url 'core:chat' channel.uuid %}">
                   <h5>{{ channel.name }}</h5>
                 </a>
-<<<<<<< HEAD
                 
                 {% if request.user.is_superuser %}
-=======
-
->>>>>>> baa62df39daf27e05745499050687173cdb8ee2d
                 <div style="margin-left: 20px; font-size: 14px;">
                   <a href="#" title="Editar canal"
                      onclick="updateRoom(`{{ channel.id }}`, `{{ channel.name }}`, `{{ channel.every_one_send_message }}` , `{{ channel.type }}`,`{{ channel.get_users }}`  )">
@@ -111,12 +107,8 @@
                     <i class="fas fa-trash"></i>
                   </a>
                 </div>
-<<<<<<< HEAD
                 {% endif %}
               
-=======
-
->>>>>>> baa62df39daf27e05745499050687173cdb8ee2d
               </div>
             </div>
           {% endfor %}
@@ -206,7 +198,6 @@
         <div class="header">
           <span>#</span>
           <h2 id="room_selected">
-<<<<<<< HEAD
             {% if room and not room.one_a_one %} 
               {{ room.name }}
               {% if request.user.is_superuser %}
@@ -214,10 +205,6 @@
                 <i class="fas fa-user-plus"></i> 
               </a>
               {% endif %}
-=======
-            {% if room and not room.one_a_one %}
-              {{ room.name }}
->>>>>>> baa62df39daf27e05745499050687173cdb8ee2d
             {% elif room %}
               {% for user in room.user.all %}
                 {% if not user == request.user %}
@@ -392,7 +379,6 @@
           </div>
 
 
-<<<<<<< HEAD
             <!-- <div class="box" id="participants_input">
               <input id="users" type="text" name="users" 
               style="border-left: none; border-top: none; border-right: none; outline: none; background-color: #6272a4; width: 100%; border-bottom: 1px solid black;">
@@ -404,19 +390,6 @@
             
             <input class="d-none" name="room" id="room">
             <input class="d-none" name="users_list" id="users_list">
-=======
-          <br>
-
-          <div class="box" id="participants_input">
-            <label>Participantes: (Usernames separados por vírgula)</label>
-            <input id="users" type="text" name="users"
-                   style="border-left: none; border-top: none; border-right: none; outline: none; background-color: #6272a4; width: 100%; border-bottom: 1px solid black;">
-
-          </div>
-
-          <input class="d-none" name="room" id="room">
-          <input class="d-none" name="users_list" id="users_list">
->>>>>>> baa62df39daf27e05745499050687173cdb8ee2d
 
           <div class="modal-footer info" id="modal-footer-add" style="border: none">
             <button type="button" class="btn" data-dismiss="modal">Cancelar</button>
@@ -441,7 +414,6 @@
   </div>
 </div>
 
-<<<<<<< HEAD
 <div class="modal fade" id="addMembers" tabindex="-1" role="dialog"
     aria-labelledby="addFriend" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -481,14 +453,6 @@
     </div>
   </div>
 </div>
-=======
-<style>
-    ol {
-        justify-content: center;
-        align-items: center;
-    }
-</style>
->>>>>>> baa62df39daf27e05745499050687173cdb8ee2d
 
 <script>
 
@@ -496,7 +460,6 @@
         $('#profile').modal('show');
     {% endif %}
 
-<<<<<<< HEAD
   async function addNewRoom(){
 
     const url = `../../users/0/`
@@ -510,11 +473,6 @@
   async function selectRoom(id, name, users){
     const jsonObject = await JSON.parse(users.replaceAll(`'`,`"`));
     document.getElementById('room_selected').textContent = name;
-=======
-    async function selectRoom(id, name, users) {
-        const jsonObject = await JSON.parse(users.replaceAll(`'`, `"`));
-        document.getElementById('room_selected').textContent = name;
->>>>>>> baa62df39daf27e05745499050687173cdb8ee2d
 
         const membersArea = document.getElementById('members');
         membersArea.innerHTML = "";
@@ -560,7 +518,6 @@
     async function updateRoom(id, name, flag, type, users) {
         $('#addChannel').modal('show');
 
-<<<<<<< HEAD
     const participants = document.getElementById("listUsers")
     participants.innerHTML= "";
 
@@ -609,50 +566,6 @@
     const [file] = id_image.files
     if (file) {
       image_viewer.src = URL.createObjectURL(file)
-=======
-        document.querySelectorAll('.text-modal-title').forEach((element) => {
-            element.textContent = "Atualizar"
-        })
-        document.getElementById("name").value = name;
-
-        if (flag == "True") {
-            document.getElementById('flexCheckDefault').checked;
-        }
-
-        document.getElementById('privado').checked = false;
-        document.getElementById('publico').checked = false;
-        if (type == "privado") {
-            document.getElementById('privado').checked = true;
-        } else {
-            document.getElementById('publico').checked = true;
-        }
-
-
-        const participants = document.getElementById("participants_input")
-        participants.innerHTML = "<label>Participantes</label>";
-
-        const jsonObject = await JSON.parse(users.replaceAll(`'`, `"`));
-        console.log(jsonObject)
-
-        jsonObject.forEach((obj) => {
-            participants.insertAdjacentHTML("beforeend",
-                `
-          <div class="form-check">
-            <input class="form-check-input check-update" type="checkbox" checked value=${obj.id}>
-            <label class="form-check-label" for="flexCheckDefault">
-                ${obj.name}
-            </label>
-          </div>  
-        
-        `
-            );
-        });
-
-        document.getElementById("modal-footer-add").style = "display:none;border:none"
-        document.getElementById("modal-footer-update").style = "border:none"
-        document.getElementById("room").value = id
-
->>>>>>> baa62df39daf27e05745499050687173cdb8ee2d
     }
 
     function saveUpdate() {
@@ -675,8 +588,6 @@
         }
     }
 
-<<<<<<< HEAD
-<script>
 
   function get_csrf_token(){
       const csrftoken = document.getElementsByName('csrfmiddlewaretoken');
@@ -774,14 +685,6 @@
     }
   }
 
-=======
-    function delete_image() {
-        image_viewer.src = ""
-        document.querySelector("#image-clear_id").checked = true
-    }
-
-
->>>>>>> baa62df39daf27e05745499050687173cdb8ee2d
 </script>
 {% block js %}
 {% endblock %}
