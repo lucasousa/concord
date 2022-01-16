@@ -73,3 +73,27 @@ def get_statuses(request):
     users = User.objects.all().values_list('id', 'status', 'last_ping')
     data = {'data': list(users)}
     return JsonResponse(data=data, safe=False)
+
+
+@login_required
+def users_without_rooms(request, room):
+    ALL_USERS=0
+    if room == ALL_USERS: 
+        without_rooms=User.objects.all().exclude(id=request.user.id)
+    else:
+        room = get_object_or_404(Room, id=room)
+        users_ids = [ user.id for user in room.user.all()]
+        without_rooms=User.objects.all().exclude(id__in=users_ids, id=request.user.id)
+
+    response = []
+    for user in without_rooms:
+        response.append(
+            {
+                "name":user.name,
+                "username":user.username,
+                "id":user.id
+            }
+        )
+
+    return JsonResponse({"users": response}, safe=False)
+
