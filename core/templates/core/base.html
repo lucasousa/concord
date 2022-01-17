@@ -195,6 +195,17 @@
               Nenhuma sala selecionada
             {% endif %}
           </h2>
+          <form action="{% url 'core:logout' %}" class="button" method="post">
+            {% csrf_token %}
+            <div class="logout">
+              <button class="button">
+                  <span class="icon">
+                    <i class="fas fa-sign-in-alt"></i>
+                    sair
+                  </span>
+              </button>
+            </div>
+          </form>
         </div>
       </nav>
       <div class="chat--inner">
