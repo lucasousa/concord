@@ -255,7 +255,6 @@
 
       <div class="modal-header" style="border: none">
         <h5 class="modal-title">
-          <span class="text-modal-title"></span>
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -353,27 +352,6 @@
           </div>
 
           <br>
-
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="type" value="privado" id="privado" checked>
-            <label class="form-check-label" for="flexRadioDefault2">
-              Privado
-            </label>
-          </div>
-
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="type" value="publico" id="publico">
-            <label class="form-check-label" for="flexRadioDefault1">
-              Público
-            </label>
-          </div>
-
-
-            <!-- <div class="box" id="participants_input">
-              <input id="users" type="text" name="users" 
-              style="border-left: none; border-top: none; border-right: none; outline: none; background-color: #6272a4; width: 100%; border-bottom: 1px solid black;">
-              
-            </div> -->
             
             <label>Participantes:</label>
             <div id="listUsers"></div>
@@ -528,11 +506,21 @@ function mountMembersList(users, rootElement){
 }
 
 async function addNewRoom(){
+  document.getElementById("name").value = ''
+  document.getElementById("flexCheckDefault").checked=false
+  document.getElementById("room").value=''
+
+  document.querySelectorAll(".text-modal-title").forEach((el)=>{
+    el.textContent="Adicionar"
+  })
 
   const url = `../../users/0/`
   const response =  await get_request(url)
   const datas = await response.json();
   mountMembersList(datas.users, 'listUsers');
+
+  document.getElementById("modal-footer-add").style = "border:none"
+  document.getElementById("modal-footer-update").style = "display:none;border:none"
 
   $('#addChannel').modal('show');
 }
@@ -583,36 +571,42 @@ async function selectRoom(id, name, users){
   }
 
   async function updateRoom(id, name, flag, type, users) {
-      $('#addChannel').modal('show');
+    document.querySelectorAll(".text-modal-title").forEach((el)=>{
+      el.textContent="Atualizar"
+    })
 
-  const participants = document.getElementById("listUsers")
-  participants.innerHTML= "";
+    $('#addChannel').modal('show');
+    const participants = document.getElementById("listUsers")
+    participants.innerHTML= "";
 
-  const jsonObject = await JSON.parse(users.replaceAll(`'`,`"`));
-  console.log(jsonObject)
-  const currentUser = "{{request.user.id}}"
-  const isSuperUser = "{{request.user.is_superuser}}"
-
-
-  jsonObject.forEach((obj)=>{
-    if(currentUser != obj.id){
+    const jsonObject = await JSON.parse(users.replaceAll(`'`,`"`));
+    const currentUser = "{{request.user.id}}"
+    const isSuperUser = "{{request.user.is_superuser}}"
+    document.getElementById("name").value = name
+    
+    if(flag=="True"){
+      document.getElementById("flexCheckDefault").checked=true
+    }
+    
+    jsonObject.forEach((obj)=>{
+      if(currentUser != obj.id){
         participants.insertAdjacentHTML("beforeend", 
-          `
-            <div class="form-check">
-              <input class="form-check-input check-update" type="checkbox" checked value=${obj.id}>
-              <label class="form-check-label" for="flexCheckDefault">
-                  ${obj.name}
-              </label>
-            </div>  
-          
-          `
+        `
+        <div class="form-check">
+          <input class="form-check-input check-update" type="checkbox" checked value=${obj.id}>
+          <label class="form-check-label" for="flexCheckDefault">
+            ${obj.name}
+          </label>
+        </div>  
+        
+        `
         );
       }
-  });
-
-  document.getElementById("modal-footer-add").style = "display:none;border:none"
-  document.getElementById("modal-footer-update").style = "border:none"
-  document.getElementById("room").value = id
+    });
+    
+    document.getElementById("modal-footer-add").style = "display:none;border:none"
+    document.getElementById("modal-footer-update").style = "border:none"
+    document.getElementById("room").value = id
 
 }
 
@@ -672,7 +666,14 @@ id_image.onchange = evt => {
       "users":usersSelecteds,
       "room":roomID
     })
-    window.location.reload();
+
+    console.log(response)
+    if(response.status==301){
+      window.location.href = '/'
+    }
+    else{
+      window.location.reload();
+    }
   }catch(error){
 
   }
