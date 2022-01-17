@@ -42,9 +42,11 @@
 
 <div class="discordApp">
   <div class="server">
-    <div class="server--icon active is-img">
-      <img src="{% if user.image %} {{ user.image.url }} {% endif %}" alt="">
-    </div>
+    <a href="{% url "core:home" %}">
+      <div class="server--icon active is-img">
+        <img src="{% if user.image %} {{ user.image.url }} {% endif %}" alt="">
+      </div>
+    </a>
     <div class="server--seperator"></div>
     {% for room in one_a_one %}
       {% for user in room.user.all %}
