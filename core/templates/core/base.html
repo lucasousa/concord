@@ -66,9 +66,11 @@
     <div class="channels">
       <nav>
         <h3>Marketeiros</h3>
-        <a href="#" style="color: white;" title="Adicionar nova sala" onclick="$('#addChannel').modal('show');">
+        {% if request.user.is_superuser %}
+        <a href="#" style="color: white;" title="Adicionar nova sala" onclick="addNewRoom()">
           <i class="fas fa-plus-circle"></i>
         </a>
+        {% endif %}
       </nav>
 
       <div class="channels--list">
@@ -93,7 +95,7 @@
                 <a href="{% url 'core:chat' channel.uuid %}">
                   <h5>{{ channel.name }}</h5>
                 </a>
-
+                {% if request.user.is_superuser %}
                 <div style="margin-left: 20px; font-size: 14px;">
                   <a href="#" title="Editar canal"
                      onclick="updateRoom(`{{ channel.id }}`, `{{ channel.name }}`, `{{ channel.every_one_send_message }}` , `{{ channel.type }}`,`{{ channel.get_users }}`  )">
@@ -104,7 +106,7 @@
                     <i class="fas fa-trash"></i>
                   </a>
                 </div>
-
+                {% endif %}
               </div>
             </div>
           {% endfor %}
@@ -131,7 +133,7 @@
                 <a href="{% url 'core:chat' group.uuid %}">
                   <h5>{{ group.name }}</h5>
                 </a>
-
+                {% if request.user.is_superuser %}
                 <div style="margin-left: 20px; font-size: 14px;">
                   <a href="#" title="Editar grupo"
                      onclick="updateRoom(`{{ group.id }}`, `{{ group.name }}`, `{{ group.every_one_send_message }}` , `{{ group.type }}`,`{{ group.get_users }}`  )">
@@ -142,6 +144,7 @@
                     <i class="fas fa-trash"></i>
                   </a>
                 </div>
+                {% endif %}
 
               </div>
 
@@ -185,6 +188,13 @@
           <h2 id="room_selected">
             {% if room and not room.one_a_one %}
               {{ room.name }}
+
+              {% if request.user.is_superuser %}
+              <a style="margin-left: 10px;" title="Adicionar membros" onclick="addNewMember(`{{room.id}}`)">
+                <i class="fas fa-user-plus"></i> 
+              </a>
+              {% endif %}
+
             {% elif room %}
               {% for user in room.user.all %}
                 {% if not user == request.user %}
@@ -214,6 +224,7 @@
         {% endblock %}
 
         <div class="members" id="members">
+          {% if room %}
           {% for member in members %}
             <div class="member">
               <span class="userIcon">
@@ -223,15 +234,18 @@
                 <div style="display:flex; flex-direction: row; align-items: center; font-size: 13px">
                   <h4>{{ member.name }}</h4>
                   {% if room %}
+                  {% if request.user.is_superuser %}
                     <a href="#" onclick="removeParticipant( '{{ member.id }}' , '{{ member.name }}', '{{ room.id }}' )">
                       <i class="fas fa-times" style="margin-left: 20px" style="margin-left: 30px"> Remover </i>
                     </a>
+                  {% endif %}
                   {% endif %}
                 </div>
                 <span id="status-{{ member.id }}" class="subText">{{ member.status }}</span>
               </div>
             </div>
           {% endfor %}
+          {% endif %}
         </div>
 
         <form method="POST" action="{% url 'rooms:room_remove_participant' %}" id="form_remove_participant"
@@ -252,7 +266,6 @@
 
       <div class="modal-header" style="border: none">
         <h5 class="modal-title">
-          <span class="text-modal-title"></span>
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -350,33 +363,12 @@
           </div>
 
           <br>
-
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="type" value="privado" id="privado" checked>
-            <label class="form-check-label" for="flexRadioDefault2">
-              Privado
-            </label>
-          </div>
-
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="type" value="publico" id="publico">
-            <label class="form-check-label" for="flexRadioDefault1">
-              Público
-            </label>
-          </div>
-
-
-          <br>
-
-          <div class="box" id="participants_input">
-            <label>Participantes: (Usernames separados por vírgula)</label>
-            <input id="users" type="text" name="users"
-                   style="border-left: none; border-top: none; border-right: none; outline: none; background-color: #6272a4; width: 100%; border-bottom: 1px solid black;">
-
-          </div>
-
-          <input class="d-none" name="room" id="room">
-          <input class="d-none" name="users_list" id="users_list">
+            
+            <label>Participantes:</label>
+            <div id="listUsers"></div>
+            
+            <input class="d-none" name="room" id="room">
+            <input class="d-none" name="users_list" id="users_list">
 
           <div class="modal-footer info" id="modal-footer-add" style="border: none">
             <button type="button" class="btn" data-dismiss="modal">Cancelar</button>
@@ -401,136 +393,302 @@
   </div>
 </div>
 
-<style>
-    ol {
-        justify-content: center;
-        align-items: center;
-    }
-</style>
+<div class="modal fade" id="addMembers" tabindex="-1" role="dialog"
+    aria-labelledby="addFriend" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content modal-remove-friend" style="background-color: #6272a4;">
+
+      <div class="modal-header" style="border: none">
+        <h5 class="modal-title">
+            <span class="text-modal-title">Adicionar novos membros</span>
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body" id="modal-body-friendship" >
+        <form method = "post" enctype="multipart/form-data">
+          {% csrf_token %}
+          
+          <div id="newMembersArea"></div>
+          
+          <div id="empty-members-msg"></div>
+
+          <input type="text" name="id_room" id="id_room_for_members" class="d-none">
+
+          <div class="modal-footer info" id="modal-footer-members" style="border: none">
+            <button type="button" class="btn" data-dismiss="modal">Cancelar</button>
+            <button class="btn btn-add-friend" type="button" onclick="saveNewMembers()" id="btn-add-members">
+              Adicionar
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+  </div>
+</div>
 
 <script>
 
-    {% if profile_form.errors %}
-        $('#profile').modal('show');
-    {% endif %}
+{% if profile_form.errors %}
+    $('#profile').modal('show');
+{% endif %}
 
-    async function selectRoom(id, name, users) {
-        const jsonObject = await JSON.parse(users.replaceAll(`'`, `"`));
-        document.getElementById('room_selected').textContent = name;
 
-        const membersArea = document.getElementById('members');
-        membersArea.innerHTML = "";
 
-        jsonObject.forEach((obj) => {
-            membersArea.insertAdjacentHTML("beforeend",
-                `
-          <div class="member">
-            <span class="userIcon">
-              <img src="{%  if user.image %} {{user.image.url}} {% endif %}" alt="">
-            </span>
-            <div class="title">
-              <div style="display:flex; flex-direction: row; align-items: center; font-size: 13px">
-                <h4>${obj.name}</h4>
-                <a href="#" onclick="removeParticipant( '${obj.id}' , '${obj.name}', '${obj.room}' )">
-                  <i class="fas fa-times" style="margin-left: 20px" style="margin-left: 30px"> Remover </i>
-                </a>
-              </div>
-              <span id='status-${obj.id}' class="subText">Online</span>
+async function addNewMember(roomID){
+  const url = `../../users/${roomID}/`
+  const response =  await get_request(url)
+  const datas = await response.json();
+
+  document.getElementById('id_room_for_members').value = roomID
+
+  if(datas.users.length == 0){
+    document.getElementById('btn-add-members').style="display:none"
+    document.getElementById('empty-members-msg').innerHTML = "<label>Todos os colaboradores já foram adicionados!</label>"
+  }else{
+    document.getElementById('btn-add-members').style=""
+    document.getElementById('empty-members-msg').style="display:none"
+    mountMembersList(datas.users, 'newMembersArea');
+  }
+  
+  $('#addMembers').modal('show');
+}
+
+function get_csrf_token(){
+    const csrftoken = document.getElementsByName('csrfmiddlewaretoken');
+    return csrftoken[0].value;
+}
+
+
+async function get_request(url){
+
+  const response = await fetch(url, {
+      method: "GET",
+      credentials: 'include',
+      headers: new Headers({
+        'X-CSRFToken': get_csrf_token(),
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'X-Requested-With': 'XMLHttpRequest'
+      })
+  })
+  return response;
+}
+
+
+async function post_request(url, datas){
+    const response = await fetch(url, {
+        method: "POST",
+        // body: datas,
+        body: JSON.stringify(datas),
+        credentials: 'include',
+        headers: new Headers({
+          'X-CSRFToken': get_csrf_token(),
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          'X-Requested-With': 'XMLHttpRequest'
+        })
+    })
+    return response;
+}
+
+function mountMembersList(users, rootElement){
+  
+  const membersArea = document.getElementById(rootElement)
+  membersArea.innerHTML= "";
+  
+  users.forEach((user)=>{
+    membersArea.insertAdjacentHTML("beforeend", 
+      `
+        <div class="form-check">
+          <input class="form-check-input members-room" type="checkbox" name="usersNewRoom" value=${user.id} id='${user.id}'>
+          <label class="form-check-label" for="flexCheckDefault" for='${user.id}'>
+            ${user.name}
+          </label>
+        </div>  
+      
+      `
+    );
+  })
+}
+
+async function addNewRoom(){
+  document.getElementById("name").value = ''
+  document.getElementById("flexCheckDefault").checked=false
+  document.getElementById("room").value=''
+
+  document.querySelectorAll(".text-modal-title").forEach((el)=>{
+    el.textContent="Adicionar"
+  })
+
+  const url = `../../users/0/`
+  const response =  await get_request(url)
+  const datas = await response.json();
+  mountMembersList(datas.users, 'listUsers');
+
+  document.getElementById("modal-footer-add").style = "border:none"
+  document.getElementById("modal-footer-update").style = "display:none;border:none"
+
+  $('#addChannel').modal('show');
+}
+
+async function selectRoom(id, name, users){
+  const jsonObject = await JSON.parse(users.replaceAll(`'`,`"`));
+  document.getElementById('room_selected').textContent = name;
+
+      const membersArea = document.getElementById('members');
+      membersArea.innerHTML = "";
+
+      jsonObject.forEach((obj) => {
+          membersArea.insertAdjacentHTML("beforeend",
+              `
+        <div class="member">
+          <span class="userIcon">
+            <img src="{%  if user.image %} {{user.image.url}} {% endif %}" alt="">
+          </span>
+          <div class="title">
+            <div style="display:flex; flex-direction: row; align-items: center; font-size: 13px">
+              <h4>${obj.name}</h4>
+              <a href="#" onclick="removeParticipant( '${obj.id}' , '${obj.name}', '${obj.room}' )">
+                <i class="fas fa-times" style="margin-left: 20px" style="margin-left: 30px"> Remover </i>
+              </a>
             </div>
+            <span id='status-${obj.id}' class="subText">Online</span>
           </div>
+        </div>
+      
+      `
+          );
+      });
+  }
+
+  function deleteRoom(idRoom, nameRoom) {
+      if (confirm(`Deseja excluir a sala ${nameRoom}`) == true) {
+          document.getElementById('room_id_delete').value = idRoom;
+          document.getElementById('form_delete_room').submit();
+      }
+  }
+
+  function removeParticipant(idParticipant, name, idRoom, users) {
+      if (confirm(`Deseja remover ${name} da sala ?`) == true) {
+          document.getElementById('id_participant').value = idParticipant;
+          document.getElementById('id_room').value = idRoom;
+          document.getElementById('form_remove_participant').submit();
+      }
+  }
+
+  async function updateRoom(id, name, flag, type, users) {
+    document.querySelectorAll(".text-modal-title").forEach((el)=>{
+      el.textContent="Atualizar"
+    })
+
+    $('#addChannel').modal('show');
+    const participants = document.getElementById("listUsers")
+    participants.innerHTML= "";
+
+    const jsonObject = await JSON.parse(users.replaceAll(`'`,`"`));
+    const currentUser = "{{request.user.id}}"
+    const isSuperUser = "{{request.user.is_superuser}}"
+    document.getElementById("name").value = name
+    
+    if(flag=="True"){
+      document.getElementById("flexCheckDefault").checked=true
+    }
+    
+    jsonObject.forEach((obj)=>{
+      if(currentUser != obj.id){
+        participants.insertAdjacentHTML("beforeend", 
+        `
+        <div class="form-check">
+          <input class="form-check-input check-update" type="checkbox" checked value=${obj.id}>
+          <label class="form-check-label" for="flexCheckDefault">
+            ${obj.name}
+          </label>
+        </div>  
         
         `
-            );
-        });
+        );
+      }
+    });
+    
+    document.getElementById("modal-footer-add").style = "display:none;border:none"
+    document.getElementById("modal-footer-update").style = "border:none"
+    document.getElementById("room").value = id
+
+}
+
+function saveUpdate(){
+  const users = []
+  document.querySelectorAll('.check-update').forEach((el)=>{
+    if(el.checked){
+      users.push(el.value)
     }
+  })
+  document.getElementById("users_list").value = users.join(',')
+  document.getElementById("form_room").submit()
+}
 
-    function deleteRoom(idRoom, nameRoom) {
-        if (confirm(`Deseja excluir a sala ${nameRoom}`) == true) {
-            document.getElementById('room_id_delete').value = idRoom;
-            document.getElementById('form_delete_room').submit();
-        }
+id_image = document.getElementById("id_image")
+image_viewer = document.getElementById("image_viewer")
+id_image.onchange = evt => {
+  const [file] = id_image.files
+  if (file) {
+    image_viewer.src = URL.createObjectURL(file)
+  }
+}
+
+  function saveUpdate() {
+      const users = []
+      document.querySelectorAll('.check-update').forEach((el) => {
+          if (el.checked) {
+              users.push(el.value)
+          }
+      })
+      document.getElementById("users_list").value = users.join(',')
+      document.getElementById("form_room").submit()
+  }
+
+  id_image = document.getElementById("id_image")
+  image_viewer = document.getElementById("image_viewer")
+  id_image.onchange = evt => {
+      const [file] = id_image.files
+      if (file) {
+          image_viewer.src = URL.createObjectURL(file)
+      }
+  }
+
+
+  async function saveNewMembers(){
+  const usersSelecteds = []
+  document.querySelectorAll('.members-room').forEach((inputUser)=>{
+    if(inputUser.checked){
+      usersSelecteds.push(inputUser.value)
     }
+  })
+  
+  const roomID = document.getElementById('id_room_for_members').value
+  
+  try{
+    const response = await post_request('../../rooms/members-add/', {
+      "users":usersSelecteds,
+      "room":roomID
+    })
 
-    function removeParticipant(idParticipant, name, idRoom, users) {
-        if (confirm(`Deseja remover ${name} da sala ?`) == true) {
-            document.getElementById('id_participant').value = idParticipant;
-            document.getElementById('id_room').value = idRoom;
-            document.getElementById('form_remove_participant').submit();
-        }
+    console.log(response)
+    if(response.status==301){
+      window.location.href = '/'
     }
-
-    async function updateRoom(id, name, flag, type, users) {
-        $('#addChannel').modal('show');
-
-        document.querySelectorAll('.text-modal-title').forEach((element) => {
-            element.textContent = "Atualizar"
-        })
-        document.getElementById("name").value = name;
-
-        if (flag == "True") {
-            document.getElementById('flexCheckDefault').checked;
-        }
-
-        document.getElementById('privado').checked = false;
-        document.getElementById('publico').checked = false;
-        if (type == "privado") {
-            document.getElementById('privado').checked = true;
-        } else {
-            document.getElementById('publico').checked = true;
-        }
-
-
-        const participants = document.getElementById("participants_input")
-        participants.innerHTML = "<label>Participantes</label>";
-
-        const jsonObject = await JSON.parse(users.replaceAll(`'`, `"`));
-        console.log(jsonObject)
-
-        jsonObject.forEach((obj) => {
-            participants.insertAdjacentHTML("beforeend",
-                `
-          <div class="form-check">
-            <input class="form-check-input check-update" type="checkbox" checked value=${obj.id}>
-            <label class="form-check-label" for="flexCheckDefault">
-                ${obj.name}
-            </label>
-          </div>  
-        
-        `
-            );
-        });
-
-        document.getElementById("modal-footer-add").style = "display:none;border:none"
-        document.getElementById("modal-footer-update").style = "border:none"
-        document.getElementById("room").value = id
-
+    else{
+      window.location.reload();
     }
+  }catch(error){
 
-    function saveUpdate() {
-        const users = []
-        document.querySelectorAll('.check-update').forEach((el) => {
-            if (el.checked) {
-                users.push(el.value)
-            }
-        })
-        document.getElementById("users_list").value = users.join(',')
-        document.getElementById("form_room").submit()
-    }
-
-    id_image = document.getElementById("id_image")
-    image_viewer = document.getElementById("image_viewer")
-    id_image.onchange = evt => {
-        const [file] = id_image.files
-        if (file) {
-            image_viewer.src = URL.createObjectURL(file)
-        }
-    }
-
-    function delete_image() {
-        image_viewer.src = ""
-        document.querySelector("#image-clear_id").checked = true
-    }
-
+  }
+}
 
 </script>
 {% block js %}
