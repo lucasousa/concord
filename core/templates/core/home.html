@@ -26,11 +26,12 @@
       {% endfor %}
 
     </div>
-
-    {% if room.every_one_send_message or request.user.is_superuser %}
+    {% if room %}
+      {% if room.every_one_send_message or request.user.is_superuser %}
       <div class="messages--send">
         <input type="text" placeholder="Digite aqui" id="chat-message-input">
       </div>
+      {% endif %}
     {% endif %}
 
   </div>
